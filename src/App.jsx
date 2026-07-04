@@ -1,5 +1,3 @@
-const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -7,8 +5,8 @@ import { createClient } from "@supabase/supabase-js";
 // SUPABASE CONFIGURATION
 // Replace these with your actual values from supabase.com → Project Settings → API
 // ─────────────────────────────────────────────────────────────────────────────
-//const SUPABASE_URL  = "https://YOUR_PROJECT_ID.supabase.co";
-//const SUPABASE_ANON = "YOUR_ANON_PUBLIC_KEY";
+const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -1458,22 +1456,80 @@ function GCCOverseas({ connected }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-const componentMap = {
-  setup:      SetupScreen,
-  "worker-reg": WorkerReg,
-  "worker-app": WorkerApp,
-  employer:   EmployerPortal,
-  agent:      AgentApp,
-  fraud:      FraudDetection,
-  govt:       GovtDashboard,
-  matching:   AIMatching,
-  gcc:        GCCOverseas,
+
+// ─── ROUTE MAP ───────────────────────────────────────────────────────────────
+// Maps URL paths to screen IDs
+// mygrandlabour.com/register  → worker-reg
+// mygrandlabour.com/employer  → employer
+// etc.
+const ROUTE_MAP = {
+  "/app":            "setup",
+  "/app/":           "setup",
+  "/app/setup":      "setup",
+  "/app/register":   "worker-reg",
+  "/app/worker":     "worker-app",
+  "/app/employer":   "employer",
+  "/app/hire":       "employer",
+  "/app/agent":      "agent",
+  "/app/fraud":      "fraud",
+  "/app/dashboard":  "govt",
+  "/app/government": "govt",
+  "/app/match":      "matching",
+  "/app/gcc":        "gcc",
+  "/app/overseas":   "gcc",
 };
 
+// Reverse map: screen ID → canonical URL path
+const SCREEN_TO_PATH = {
+  "setup":      "/app",
+  "worker-reg": "/app/register",
+  "worker-app": "/app/worker",
+  "employer":   "/app/employer",
+  "agent":      "/app/agent",
+  "fraud":      "/app/fraud",
+  "govt":       "/app/dashboard",
+  "matching":   "/app/match",
+  "gcc":        "/app/gcc",
+};
+
+function getInitialScreen() {
+  const path = window.location.pathname.toLowerCase().replace(/\/$/, "") || "/app";
+  return ROUTE_MAP[path] || "setup";
+}
+
+// ─── COMPONENT MAP ───────────────────────────────────────────────────────────
+const componentMap = {
+  "setup":      SetupScreen,
+  "worker-reg": WorkerReg,
+  "worker-app": WorkerApp,
+  "employer":   EmployerPortal,
+  "agent":      AgentApp,
+  "fraud":      FraudDetection,
+  "govt":       GovtDashboard,
+  "matching":   AIMatching,
+  "gcc":        GCCOverseas,
+};
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [active, setActive] = useState("setup");
+  const [active, setActive] = useState(getInitialScreen);
   const [connected, setConnected] = useState(false);
-  const ActiveScreen = componentMap[active];
+  const ActiveScreen = componentMap[active] || SetupScreen;
+
+  // Update browser URL when user switches screens
+  useEffect(() => {
+    const newPath = SCREEN_TO_PATH[active] || "/app";
+    if (window.location.pathname !== newPath) {
+      window.history.pushState({}, "", newPath);
+    }
+  }, [active]);
+
+  // Handle browser back / forward buttons
+  useEffect(() => {
+    const handlePop = () => setActive(getInitialScreen());
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: C.gray1, fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -1486,51 +1542,111 @@ export default function App() {
         ::-webkit-scrollbar-thumb { background: ${C.gray3}; border-radius: 4px; }
       `}</style>
 
-      {/* Nav */}
-      <div style={{ background: C.navy, color: C.white, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56, position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 18, fontWeight: 800 }}>MGL</span>
-          <span style={{ fontSize: 11, opacity: 0.4 }}>Platform PoC + Supabase</span>
+      {/* ── TOP NAV ── */}
+      <div style={{
+        background: C.navy, color: C.white, padding: "0 24px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        height: 56, position: "sticky", top: 0, zIndex: 100,
+        boxShadow: "0 2px 12px rgba(0,0,0,0.2)"
+      }}>
+        {/* Logo — clicking goes back to marketing site */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <a href="/" style={{ fontSize: 20, fontWeight: 800, color: C.white, textDecoration: "none", letterSpacing: "-0.02em" }}>
+            M<span style={{ color: C.orange }}>G</span>L
+          </a>
+          <span style={{ fontSize: 11, opacity: 0.35, borderLeft: `1px solid rgba(255,255,255,0.15)`, paddingLeft: 12 }}>
+            Platform PoC
+          </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+
+        {/* Quick persona nav */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          {[
+            { label: "Workers",    screen: "worker-reg", icon: "👷" },
+            { label: "Employers",  screen: "employer",   icon: "🏢" },
+            { label: "Government", screen: "govt",       icon: "🏛️" },
+            { label: "GCC",        screen: "gcc",        icon: "✈️" },
+          ].map(link => (
+            <button key={link.screen} onClick={() => setActive(link.screen)} style={{
+              background: active === link.screen ? C.orange : "rgba(255,255,255,0.06)",
+              color: C.white,
+              border: `1px solid ${active === link.screen ? C.orange : "rgba(255,255,255,0.12)"}`,
+              borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 600,
+              cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+              display: "flex", alignItems: "center", gap: 4,
+            }}>
+              <span>{link.icon}</span> {link.label}
+            </button>
+          ))}
           <DBBadge connected={connected} />
-          <div style={{ fontSize: 11, background: `${C.orange}22`, color: C.orange, padding: "4px 10px", borderRadius: 20, fontWeight: 600 }}>Powered by Claude AI</div>
         </div>
       </div>
 
+      {/* ── BODY ── */}
       <div style={{ display: "flex", maxWidth: 1200, margin: "0 auto" }}>
-        {/* Sidebar */}
-        <div style={{ width: 240, flexShrink: 0, background: C.white, borderRight: `1px solid ${C.gray2}`, minHeight: "calc(100vh - 56px)", padding: 16, position: "sticky", top: 56, height: "calc(100vh - 56px)", overflowY: "auto" }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: C.gray4, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10, paddingLeft: 8 }}>Product Components</div>
+
+        {/* ── SIDEBAR ── */}
+        <div style={{
+          width: 228, flexShrink: 0, background: C.white,
+          borderRight: `1px solid ${C.gray2}`,
+          minHeight: "calc(100vh - 56px)", padding: 12,
+          position: "sticky", top: 56, height: "calc(100vh - 56px)", overflowY: "auto"
+        }}>
+          <div style={{
+            fontSize: 10, fontWeight: 700, color: C.gray4,
+            textTransform: "uppercase", letterSpacing: "0.08em",
+            marginBottom: 10, paddingLeft: 8
+          }}>
+            Product Components
+          </div>
+
           {screens.map(s => (
             <button key={s.id} onClick={() => setActive(s.id)} style={{
-              width: "100%", textAlign: "left", padding: "10px 10px", borderRadius: 8, border: "none", cursor: "pointer",
-              background: active === s.id ? C.navy : "transparent", color: active === s.id ? C.white : C.gray5,
+              width: "100%", textAlign: "left", padding: "9px 10px",
+              borderRadius: 8, border: "none", cursor: "pointer",
+              background: active === s.id ? C.navy : "transparent",
+              color: active === s.id ? C.white : C.gray5,
               marginBottom: 2, fontFamily: "inherit", transition: "all 0.1s",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 16 }}>{s.icon}</span>
+                <span style={{ fontSize: 15 }}>{s.icon}</span>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600 }}>{s.label}</div>
-                  <div style={{ fontSize: 10, opacity: 0.65, marginTop: 1 }}>{s.desc}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600 }}>{s.label}</div>
+                  <div style={{ fontSize: 10, opacity: 0.6, marginTop: 1 }}>{s.desc}</div>
                 </div>
               </div>
             </button>
           ))}
 
-          <div style={{ marginTop: 16, padding: "12px 10px", background: connected ? C.tealL : C.amberL, borderRadius: 10, border: `1px solid ${connected ? C.teal : C.amber}30` }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: connected ? C.teal : C.amber, marginBottom: 4 }}>
+          {/* DB status */}
+          <div style={{
+            marginTop: 14, padding: "10px 10px",
+            background: connected ? C.tealL : C.amberL,
+            borderRadius: 8,
+            border: `1px solid ${connected ? C.teal : C.amber}30`
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: connected ? C.teal : C.amber, marginBottom: 3 }}>
               {connected ? "✓ Live Database" : "⚙️ Setup Required"}
             </div>
-            <div style={{ fontSize: 10, color: C.gray5, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 9, color: C.gray5, lineHeight: 1.5 }}>
               {connected
-                ? "All screens reading from and writing to your Supabase database in real time."
-                : "Go to ⚙️ Supabase Setup to connect your free database. All 8 components support live data."}
+                ? "All screens reading & writing to your Supabase database in real time."
+                : "Go to ⚙️ Supabase Setup to connect your free database."}
             </div>
           </div>
+
+          {/* Back to marketing site */}
+          <a href="/" style={{
+            display: "flex", alignItems: "center", gap: 6,
+            marginTop: 14, padding: "9px 10px", borderRadius: 8,
+            fontSize: 11, color: C.gray4, textDecoration: "none",
+            border: `1px solid ${C.gray2}`, transition: "all 0.15s",
+          }}>
+            ← Back to mygrandlabour.com
+          </a>
         </div>
 
-        {/* Main */}
+        {/* ── MAIN CONTENT ── */}
         <div style={{ flex: 1, padding: 24, minWidth: 0, overflowX: "hidden" }}>
           <ActiveScreen key={active} connected={connected} onTest={setConnected} />
         </div>
