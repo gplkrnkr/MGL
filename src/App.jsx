@@ -1516,6 +1516,20 @@ const componentMap = {
 export default function App() {
   const [active, setActive] = useState(getInitialScreen);
   const [connected, setConnected] = useState(false);
+
+  // Auto-test Supabase connection on app load
+  useEffect(() => {
+    async function autoConnect() {
+      try {
+        const { error } = await supabase.from("workers").select("id").limit(1);
+        if (!error) setConnected(true);
+      } catch {
+        setConnected(false);
+      }
+    }
+    autoConnect();
+  }, []); // empty array = runs once on first load
+  
   const ActiveScreen = componentMap[active] || SetupScreen;
 
   // Update browser URL when user switches screens
