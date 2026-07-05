@@ -1,9 +1,26 @@
 {
-  "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/app/(.*)", "destination": "/app/index.html" },
-    { "source": "/app",      "destination": "/app/index.html" },
-    { "source": "/",         "destination": "/home.html"      }
+    { "source": "/app/register",   "destination": "/index.html" },
+    { "source": "/app/worker",     "destination": "/index.html" },
+    { "source": "/app/employer",   "destination": "/index.html" },
+    { "source": "/app/agent",      "destination": "/index.html" },
+    { "source": "/app/fraud",      "destination": "/index.html" },
+    { "source": "/app/dashboard",  "destination": "/index.html" },
+    { "source": "/app/government", "destination": "/index.html" },
+    { "source": "/app/match",      "destination": "/index.html" },
+    { "source": "/app/gcc",        "destination": "/index.html" },
+    { "source": "/app/overseas",   "destination": "/index.html" },
+    { "source": "/app/setup",      "destination": "/index.html" },
+    { "source": "/app",            "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/home.html", "destination": "/", "permanent": true }
+  ],
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/home.html"
+    }
   ],
   "headers": [
     {
