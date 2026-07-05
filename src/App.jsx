@@ -9,8 +9,8 @@ const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-//const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+//const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
 const C = {
