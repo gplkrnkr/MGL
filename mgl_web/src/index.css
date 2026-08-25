@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #182e58;
+  --color-primary-dark: #101f3d;
+  --color-primary-light: #e8eef8;
+  --color-accent: #e48825;
+  --color-background: #ffffff;
+  --color-page: #f7f9fc;
+  --color-border: #d9e1ec;
+  --color-text: #182033;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #ffffff;
+  --color-danger: #dc2626;
+  --color-danger-light: #fdecec;
+  --color-warning: #a16712;
+  --color-warning-light: #fff5e6;
+  --color-success: #15803d;
+  --color-success-light: #e8f7ee;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Tailwind's default --spacing unit is 4px, which already matches the
+     mobile app's xs/sm/md/lg/xl/xxl scale (4/8/16/24/32/48) via the
+     standard numeric utilities (p-1, p-2, p-4, p-6, p-8, p-12). Naming
+     scale steps here would shadow Tailwind's built-in sm/md/lg/xl
+     max-width, width, and height utilities since they share this same
+     theme namespace. */
+}
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
