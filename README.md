@@ -6,7 +6,7 @@ backend ([sajinaa-pk/mgl_backend](https://github.com/sajinaa-pk/mgl_backend)).
 | Path | What |
 | --- | --- |
 | [`mgl_web/`](mgl_web/) | The web app — worker, employer and admin portals (React + TypeScript + Vite). See its README. |
-| [`marketing/home.html`](marketing/home.html) | The static marketing page previously served at `mygrandlabour.com/`. |
+| [`marketing/home.html`](marketing/home.html) | The static marketing page. Until the AWS cutover, Vercel serves it at `mygrandlabour.com/` ([`vercel.json`](vercel.json)); its old `/app/...` links redirect to the homepage. |
 
 ## History
 
