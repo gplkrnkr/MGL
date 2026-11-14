@@ -160,7 +160,7 @@ export function WorkerProfile() {
     <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-text mb-1 text-center">Complete your registration</h1>
-        <p className="text-text-muted mb-6 text-center">Create a verified worker ID for MyGrandLabour.</p>
+        <p className="text-text-muted mb-6 text-center">Create your MGL worker ID.</p>
 
         <StepIndicator current={step} />
 

@@ -1,22 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #182e58;
-  --color-primary-dark: #101f3d;
-  --color-primary-light: #e8eef8;
-  --color-accent: #e48825;
+  --color-primary: #05254e;
+  --color-primary-dark: #031b3a;
+  --color-primary-light: #e6ecf5;
+  --color-accent: #fc6703;
   --color-background: #ffffff;
-  --color-page: #f7f9fc;
-  --color-border: #d9e1ec;
-  --color-text: #182033;
-  --color-text-muted: #64748b;
+  --color-page: #f1f4f9;
+  --color-border: #dfe5ee;
+  --color-text: #05254e;
+  --color-text-muted: #5b6575;
   --color-text-inverse: #ffffff;
   --color-danger: #dc2626;
   --color-danger-light: #fdecec;
   --color-warning: #a16712;
   --color-warning-light: #fff5e6;
-  --color-success: #15803d;
-  --color-success-light: #e8f7ee;
+  --color-success: #0b6e4f;
+  --color-success-light: #e7f4ee;
+
+  /* Same fonts as the home page: Archivo for headings, Inter for text. */
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: Archivo, Inter, system-ui, sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -34,6 +38,11 @@
 body {
   background-color: var(--color-page);
   color: var(--color-text);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
 }

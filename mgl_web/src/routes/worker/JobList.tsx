@@ -138,7 +138,7 @@ function PostJobTab() {
       <Button
         onClick={() => postMutation.mutate()}
         disabled={postMutation.isPending || !skill}
-        className="self-center bg-accent text-text-inverse hover:opacity-90"
+        className="self-center bg-accent text-primary hover:opacity-90"
       >
         {postMutation.isPending ? 'Posting…' : 'Post Job Requirement'}
       </Button>

@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import mglLogo from '../assets/mgl-logo.png'
 import { useAuth } from '../context/AuthContext'
 import { Button } from './ui/Button'
 
@@ -38,8 +37,8 @@ export function PortalLayout({
         <div className="max-w-5xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <div className="flex items-center gap-4">
             <Link to={homeTo} className="flex items-center gap-2">
-              <img src={mglLogo} alt="MyGrandLabour" className="h-8 w-8 object-contain" />
-              <span className="font-bold text-primary text-lg">MyGrandLabour</span>
+              <img src="/mgl-logo-mark.png" alt="" className="h-10 w-auto" />
+              <span className="font-display font-bold text-primary text-lg">My Grand Labour</span>
             </Link>
             <span className="text-text-muted text-sm hidden sm:inline">{title}</span>
           </div>

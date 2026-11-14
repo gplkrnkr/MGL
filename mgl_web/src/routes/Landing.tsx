@@ -41,7 +41,7 @@ export function Landing() {
   return (
     <AppShell>
       <div className="max-w-3xl">
-        <h1 className="text-3xl font-bold text-primary mb-1">MyGrandLabour</h1>
+        <h1 className="text-3xl font-bold text-primary mb-1">My Grand Labour</h1>
         <p className="text-text-muted mb-6">Connecting workers with local job opportunities.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">

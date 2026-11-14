@@ -180,7 +180,7 @@ function RegisterCompanyTab() {
         onClick={() => mutation.mutate()}
         disabled={mutation.isPending || !companyName.trim()}
         variant={alreadyRegistered ? 'primary' : 'secondary'}
-        className={`self-center ${alreadyRegistered ? '' : 'bg-accent text-text-inverse hover:opacity-90'}`}
+        className={`self-center ${alreadyRegistered ? '' : 'bg-accent text-primary hover:opacity-90'}`}
       >
         {mutation.isPending
           ? 'Saving…'

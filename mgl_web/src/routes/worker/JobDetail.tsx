@@ -93,7 +93,7 @@ export function JobDetail() {
             </div>
           )}
           <p className="text-text">{job.description}</p>
-          <p className="text-sm text-text-muted">Posted by {job.employerName || 'MyGrandLabour'}</p>
+          <p className="text-sm text-text-muted">Posted by {job.employerName || 'My Grand Labour'}</p>
 
           <div>
             <Button

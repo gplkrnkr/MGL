@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import mglLogo from '../assets/mgl-logo.png'
 import { useAuth } from '../context/AuthContext'
 import { showPreviews } from '../lib/config'
 import { Button } from './ui/Button'
@@ -92,7 +91,7 @@ export function AppShell({
       <header className="bg-primary shrink-0">
         <div className="px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src={mglLogo} alt="MyGrandLabour" className="h-10 w-10 object-contain" />
+            <img src="/mgl-logo-mark.png" alt="" className="h-10 w-auto" />
             <span className="text-text-inverse/60 text-sm">Platform</span>
           </Link>
 
@@ -104,7 +103,7 @@ export function AppShell({
                   key={tab.label}
                   to={tab.to}
                   className={`px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1.5 ${
-                    active ? 'bg-accent text-text-inverse' : 'bg-primary-dark text-text-inverse/80 hover:text-text-inverse'
+                    active ? 'bg-accent text-primary' : 'bg-primary-dark text-text-inverse/80 hover:text-text-inverse'
                   }`}
                 >
                   <span>{tab.icon}</span>
