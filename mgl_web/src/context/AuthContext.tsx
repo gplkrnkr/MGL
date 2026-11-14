@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { getMyProfile, selectEmployerRole, verifyOtp } from '../api/client'
+import { getMyProfile, selectEmployerRole, verifyFirebaseToken } from '../api/client'
 import { clearToken, getToken, setToken } from '../lib/session'
 import type { Profile } from '../api/types'
 
 interface AuthContextValue {
   profile: Profile | null
   loading: boolean
-  loginAsWorker: (phone: string, code: string) => Promise<Profile>
-  loginAsEmployer: (phone: string, code: string) => Promise<Profile>
+  loginAsWorker: (firebaseIdToken: string) => Promise<Profile>
+  loginAsEmployer: (firebaseIdToken: string) => Promise<Profile>
   logout: () => void
   refresh: () => Promise<Profile | null>
 }
@@ -42,16 +42,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loginAsWorker = async (phone: string, code: string) => {
-    const token = await verifyOtp(phone, code)
+  const loginAsWorker = async (firebaseIdToken: string) => {
+    const token = await verifyFirebaseToken(firebaseIdToken)
     setToken(token.access_token)
     const me = await getMyProfile()
     setProfile(me)
     return me
   }
 
-  const loginAsEmployer = async (phone: string, code: string) => {
-    const token = await verifyOtp(phone, code)
+  const loginAsEmployer = async (firebaseIdToken: string) => {
+    const token = await verifyFirebaseToken(firebaseIdToken)
     setToken(token.access_token)
     const me = await selectEmployerRole()
     setProfile(me)

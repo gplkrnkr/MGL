@@ -1,24 +1,21 @@
 import axios from 'axios'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { http, verifyOtp } from './client'
+import { http, verifyFirebaseToken } from './client'
 import { getToken, setToken } from '../lib/session'
 
-describe('verifyOtp', () => {
+describe('verifyFirebaseToken', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('posts to the auth endpoint and returns the raw snake_case token response', async () => {
+  it('posts the Firebase ID token and returns the raw snake_case token response', async () => {
     const postSpy = vi.spyOn(http, 'post').mockResolvedValue({
       data: { access_token: 'abc', token_type: 'bearer', user_id: 'p1', phone: '+911234567890' },
     })
 
-    const result = await verifyOtp('+911234567890', '123456')
+    const result = await verifyFirebaseToken('firebase-id-token')
 
-    expect(postSpy).toHaveBeenCalledWith('/api/auth/otp/verify', {
-      phone: '+911234567890',
-      token: '123456',
-    })
+    expect(postSpy).toHaveBeenCalledWith('/api/auth/firebase/verify', { idToken: 'firebase-id-token' })
     // Unlike the rest of the API (camelCase via serialization_alias), the auth
     // endpoints intentionally return snake_case fields -- see mgl_backend's
     // TokenResponse schema, which has no aliases.

@@ -40,10 +40,9 @@ http.interceptors.response.use(
 
 // ---- Auth ----
 
-export const requestOtp = (phone: string) => http.post('/api/auth/otp/request', { phone })
-
-export const verifyOtp = (phone: string, token: string) =>
-  http.post<TokenResponse>('/api/auth/otp/verify', { phone, token }).then((r) => r.data)
+// Exchanges a Firebase phone-auth ID token (see lib/phoneAuth.ts) for the backend's session.
+export const verifyFirebaseToken = (idToken: string) =>
+  http.post<TokenResponse>('/api/auth/firebase/verify', { idToken }).then((r) => r.data)
 
 // ---- Profile ----
 

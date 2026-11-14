@@ -1,13 +1,16 @@
-import { useState } from 'react'
-import { requestOtp } from '../api/client'
+import { useRef, useState } from 'react'
+import { phoneAuthErrorMessage, sendCode } from '../lib/phoneAuth'
 import { Button } from './ui/Button'
 import { TextField } from './ui/TextField'
 import { Card } from './ui/Card'
 
+const RECAPTCHA_CONTAINER_ID = 'recaptcha-container'
+
 interface Props {
   heading: string
   subheading: string
-  onVerify: (phone: string, code: string) => Promise<unknown>
+  /** Called with the Firebase ID token once the code is verified. */
+  onVerify: (firebaseIdToken: string) => Promise<unknown>
   onSuccess: () => void
 }
 
@@ -17,16 +20,17 @@ export function OtpLogin({ heading, subheading, onVerify, onSuccess }: Props) {
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const confirmCode = useRef<((code: string) => Promise<string>) | null>(null)
 
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setBusy(true)
     try {
-      await requestOtp(phone)
+      confirmCode.current = await sendCode(phone, RECAPTCHA_CONTAINER_ID)
       setStep('otp')
-    } catch {
-      setError('Could not send OTP. Check the number and try again.')
+    } catch (err) {
+      setError(phoneAuthErrorMessage(err))
     } finally {
       setBusy(false)
     }
@@ -34,13 +38,25 @@ export function OtpLogin({ heading, subheading, onVerify, onSuccess }: Props) {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!confirmCode.current) {
+      setStep('phone')
+      return
+    }
     setError(null)
     setBusy(true)
+    let idToken: string
     try {
-      await onVerify(phone, code)
+      idToken = await confirmCode.current(code)
+    } catch (err) {
+      setError(phoneAuthErrorMessage(err))
+      setBusy(false)
+      return
+    }
+    try {
+      await onVerify(idToken)
       onSuccess()
     } catch {
-      setError('Invalid or expired code.')
+      setError('Signed in, but the server could not start your session. Please try again.')
     } finally {
       setBusy(false)
     }
@@ -57,9 +73,9 @@ export function OtpLogin({ heading, subheading, onVerify, onSuccess }: Props) {
         {step === 'phone' ? (
           <form onSubmit={handleRequestOtp} className="flex flex-col gap-4">
             <TextField
-              label="Phone number"
+              label="Mobile number"
               type="tel"
-              placeholder="+91XXXXXXXXXX"
+              placeholder="10-digit mobile number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
@@ -86,11 +102,21 @@ export function OtpLogin({ heading, subheading, onVerify, onSuccess }: Props) {
             <Button type="submit" disabled={busy}>
               {busy ? 'Verifying…' : 'Verify & continue'}
             </Button>
-            <Button type="button" variant="ghost" onClick={() => setStep('phone')}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setStep('phone')
+                setCode('')
+                setError(null)
+              }}
+            >
               Use a different number
             </Button>
           </form>
         )}
+        {/* Firebase renders its invisible reCAPTCHA here. */}
+        <div id={RECAPTCHA_CONTAINER_ID} />
       </Card>
     </div>
   )

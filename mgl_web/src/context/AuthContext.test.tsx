@@ -48,7 +48,7 @@ describe('AuthContext', () => {
   })
 
   it('loginAsWorker stores the token and sets the profile', async () => {
-    vi.mocked(apiClient.verifyOtp).mockResolvedValue({
+    vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
       access_token: 'tok-123',
       token_type: 'bearer',
       user_id: 'p1',
@@ -60,15 +60,16 @@ describe('AuthContext', () => {
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     await act(async () => {
-      await result.current.loginAsWorker('+911234567890', '123456')
+      await result.current.loginAsWorker('firebase-id-token')
     })
 
+    expect(apiClient.verifyFirebaseToken).toHaveBeenCalledWith('firebase-id-token')
     expect(getToken()).toBe('tok-123')
     expect(result.current.profile).toEqual(mockProfile)
   })
 
   it('loginAsEmployer calls selectEmployerRole instead of getMyProfile', async () => {
-    vi.mocked(apiClient.verifyOtp).mockResolvedValue({
+    vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
       access_token: 'tok-456',
       token_type: 'bearer',
       user_id: 'p1',
@@ -80,7 +81,7 @@ describe('AuthContext', () => {
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     await act(async () => {
-      await result.current.loginAsEmployer('+911234567890', '123456')
+      await result.current.loginAsEmployer('firebase-id-token')
     })
 
     expect(apiClient.selectEmployerRole).toHaveBeenCalled()
@@ -89,7 +90,7 @@ describe('AuthContext', () => {
   })
 
   it('logout clears the token and profile', async () => {
-    vi.mocked(apiClient.verifyOtp).mockResolvedValue({
+    vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
       access_token: 'tok-789',
       token_type: 'bearer',
       user_id: 'p1',
@@ -100,7 +101,7 @@ describe('AuthContext', () => {
     const { result } = renderHook(() => useAuth(), { wrapper })
     await waitFor(() => expect(result.current.loading).toBe(false))
     await act(async () => {
-      await result.current.loginAsWorker('+911234567890', '123456')
+      await result.current.loginAsWorker('firebase-id-token')
     })
 
     act(() => result.current.logout())

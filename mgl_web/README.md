@@ -44,10 +44,19 @@ the README's own example command.)
 
 ## Three portals, one login mechanism
 
-Workers, employers, and admins all authenticate with phone + OTP against the same backend
-endpoints — there's no separate admin login system. `/login` is the worker entry point and never
+Workers, employers, and admins all sign in with their phone number through **Firebase Phone
+Auth** (`src/lib/phoneAuth.ts`): Firebase sends the SMS code and verifies it, then the app swaps
+the Firebase ID token for the backend's session at `POST /api/auth/firebase/verify` — the same
+endpoint the mobile app uses. There's no separate admin login system.
+
+Setup: register a **Web app** in the Firebase project (`mgl-backend`) and copy its config into the
+`VITE_FIREBASE_*` variables (see `.env.example`); add the site's domain under Authentication →
+Settings → Authorized domains, and allow India under the SMS region policy. While the project is on
+Firebase's free plan, only the **test phone numbers** configured under Authentication → Sign-in
+method → Phone (up to 10, each with a fixed code, no SMS sent) can sign in; real numbers need the
+pay-as-you-go plan, with no code changes. `/login` is the worker entry point and never
 touches the `isEmployer`/`isAdmin` flags; `/employer/login` is the employer entry point and calls
-`POST /api/profile/me/role` right after verifying the OTP (idempotent and one-way — a profile that
+`POST /api/profile/me/role` right after signing in (idempotent and one-way — a profile that
 becomes an employer stays one). `/admin/login` is just a normal login — admin status isn't
 self-service like the employer role is; it's granted server-side via
 `mgl_backend/scripts/promote_admin.py`, and `AdminRoute` simply checks whatever `isAdmin` comes
@@ -69,7 +78,7 @@ it does use named `sm/md/lg/full` tokens matching the mobile app's radius scale 
 
 - Document *upload* UI (mobile-only; workers upload from the app). Document *review* is on the
   web now (admin portal).
-- Employer signup beyond phone/OTP.
+- Employer signup beyond phone sign-in.
 - Analytics — flagged but intentionally not built; needs a provider decision (GA4, Plausible,
   etc.) and an account/site ID first.
 
