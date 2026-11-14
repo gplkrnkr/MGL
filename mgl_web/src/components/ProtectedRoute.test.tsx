@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { AdminRoute, EmployerRoute, WorkerRoute } from './ProtectedRoute'
+import { AdminRoute, AgentRoute, EmployerRoute, WorkerRoute } from './ProtectedRoute'
 import { AuthProvider } from '../context/AuthContext'
 import { clearToken, setToken } from '../lib/session'
 import * as apiClient from '../api/client'
@@ -29,6 +29,8 @@ const baseProfile: Profile = {
   verificationStatus: 'pending',
   isEmployer: false,
   isAdmin: false,
+  isAgent: false,
+  registeredByAgent: false,
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
 }
@@ -41,6 +43,7 @@ function renderAt(path: string, guarded: React.ReactNode) {
           <Route path="/login" element={<div>worker login page</div>} />
           <Route path="/employer/login" element={<div>employer login page</div>} />
           <Route path="/admin/login" element={<div>admin login page</div>} />
+          <Route path="/agent/login" element={<div>agent login page</div>} />
           <Route path={path} element={guarded} />
         </Routes>
       </AuthProvider>
@@ -111,5 +114,29 @@ describe('AdminRoute', () => {
 
     renderAt('/admin/documents', <AdminRoute>admin content</AdminRoute>)
     await waitFor(() => expect(screen.getByText('admin content')).toBeInTheDocument())
+  })
+})
+
+describe('AgentRoute', () => {
+  it('redirects to /agent/login when logged out', async () => {
+    renderAt('/agent', <AgentRoute>content</AgentRoute>)
+    await waitFor(() => expect(screen.getByText('agent login page')).toBeInTheDocument())
+  })
+
+  it('explains, rather than redirecting, when a signed-in user is not an agent', async () => {
+    setToken('tok-6')
+    vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAgent: false })
+
+    renderAt('/agent', <AgentRoute>agent content</AgentRoute>)
+    await waitFor(() => expect(screen.getByText(/isn.t a field agent account/)).toBeInTheDocument())
+    expect(screen.queryByText('agent content')).not.toBeInTheDocument()
+  })
+
+  it('renders children for an agent', async () => {
+    setToken('tok-7')
+    vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAgent: true })
+
+    renderAt('/agent', <AgentRoute>agent content</AgentRoute>)
+    await waitFor(() => expect(screen.getByText('agent content')).toBeInTheDocument())
   })
 })

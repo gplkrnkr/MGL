@@ -13,8 +13,11 @@ import { EmployerPortal } from './routes/employer/EmployerPortal'
 import { AdminLogin } from './routes/admin/AdminLogin'
 import { DocumentReview } from './routes/admin/DocumentReview'
 import { ApplicationReview } from './routes/admin/ApplicationReview'
+import { AgentManagement } from './routes/admin/AgentManagement'
+import { AgentLogin } from './routes/agent/AgentLogin'
+import { AgentPortal } from './routes/agent/AgentPortal'
 import { NotFound } from './routes/NotFound'
-import { WorkerRoute, EmployerRoute, AdminRoute } from './components/ProtectedRoute'
+import { WorkerRoute, EmployerRoute, AdminRoute, AgentRoute } from './components/ProtectedRoute'
 import { AgentAppDemo } from './routes/demo/AgentAppDemo'
 import { FraudDetectionDemo } from './routes/demo/FraudDetectionDemo'
 import { GovtDashboardDemo } from './routes/demo/GovtDashboardDemo'
@@ -115,6 +118,23 @@ export default function App() {
           <AdminRoute>
             <ApplicationReview />
           </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/agents"
+        element={
+          <AdminRoute>
+            <AgentManagement />
+          </AdminRoute>
+        }
+      />
+      <Route path="/agent/login" element={<AgentLogin />} />
+      <Route
+        path="/agent"
+        element={
+          <AgentRoute>
+            <AgentPortal />
+          </AgentRoute>
         }
       />
       <Route path="/demo/agent-app" element={<AgentAppDemo />} />

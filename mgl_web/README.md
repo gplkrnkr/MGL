@@ -40,7 +40,11 @@ the README's own example command.)
 - `src/routes/worker/` — worker portal: job list, job detail + apply, my applications, profile.
 - `src/routes/employer/` — employer portal: dashboard, post/edit job, applicant review, company
   profile.
-- `src/routes/admin/` — admin portal: document review, application review (see below).
+- `src/routes/admin/` — admin portal: document review, application review, field agents (see below).
+- `src/routes/agent/` — field agent portal (`/agent`): register workers on their behalf and list
+  your registrations. Each registered worker gets an MGL ID straight away and can later sign in
+  with the same mobile number to take the profile over. Agent access is granted by an admin under
+  Admin → Agents, to someone who has signed in once at `/agent/login`.
 
 ## Three portals, one login mechanism
 

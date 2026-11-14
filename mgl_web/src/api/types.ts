@@ -32,6 +32,9 @@ export interface Profile {
   verificationStatus: 'pending' | 'verified' | 'rejected'
   isEmployer: boolean
   isAdmin: boolean
+  isAgent: boolean
+  /** True when a field agent registered this worker on their behalf. */
+  registeredByAgent: boolean
   createdAt: string
   updatedAt: string
 }
@@ -132,4 +135,11 @@ export interface AdminApplication {
   workerId: string | null
   fullName: string
   phone: string
+}
+
+export interface AgentWorkerInput {
+  phone: string
+  fullName: string
+  skills: string[]
+  location: ProfileLocation | null
 }

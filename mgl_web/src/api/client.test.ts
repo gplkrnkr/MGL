@@ -56,3 +56,28 @@ describe('401 response interceptor', () => {
     expect(assignSpy).toHaveBeenCalledWith('/')
   })
 })
+
+describe('apiErrorMessage', () => {
+  it("returns the backend's detail string", async () => {
+    const { apiErrorMessage } = await import('./client')
+    const error = Object.assign(new Error('x'), { isAxiosError: true, response: { data: { detail: 'Nope' } } })
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true)
+    expect(apiErrorMessage(error, 'fallback')).toBe('Nope')
+  })
+
+  it('unwraps the first validation message', async () => {
+    const { apiErrorMessage } = await import('./client')
+    const error = Object.assign(new Error('x'), {
+      isAxiosError: true,
+      response: { data: { detail: [{ msg: 'Value error, Enter a valid 10-digit Indian mobile number' }] } },
+    })
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true)
+    expect(apiErrorMessage(error, 'fallback')).toBe('Enter a valid 10-digit Indian mobile number')
+  })
+
+  it('falls back for anything else', async () => {
+    const { apiErrorMessage } = await import('./client')
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(false)
+    expect(apiErrorMessage(new Error('x'), 'fallback')).toBe('fallback')
+  })
+})

@@ -67,6 +67,13 @@ export function Landing() {
           </Card>
         </div>
 
+        <p className="text-sm text-text-muted text-center mb-8">
+          Field agent?{' '}
+          <Link to="/agent/login" className="text-primary font-semibold">
+            Sign in to register workers
+          </Link>
+        </p>
+
         <h2 className="text-lg font-bold text-text mb-1">Explore where we're headed</h2>
         <p className="text-sm text-text-muted mb-4">
           Sample screens using demo data and simulated AI responses, not the live platform.

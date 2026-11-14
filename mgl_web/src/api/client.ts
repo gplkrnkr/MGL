@@ -3,6 +3,7 @@ import { API_BASE_URL } from '../lib/config'
 import { clearToken, getToken } from '../lib/session'
 import type {
   AdminApplication,
+  AgentWorkerInput,
   AdminDocument,
   Applicant,
   Application,
@@ -161,3 +162,33 @@ export const updateAdminApplicationStatus = (
   http
     .patch<AdminApplication>(`/api/admin/applications/${applicationId}`, { status })
     .then((r) => r.data)
+
+// ---- Agents ----
+// Field agents register workers on their behalf; the worker can later sign in with the same
+// number and carries on with that profile.
+
+export const registerWorker = (payload: AgentWorkerInput) =>
+  http.post<Profile>('/api/agent/workers', payload).then((r) => r.data)
+
+export const listMyRegistrations = () => http.get<Profile[]>('/api/agent/workers').then((r) => r.data)
+
+// ---- Admin: agents ----
+
+export const listAgents = () => http.get<Profile[]>('/api/admin/agents').then((r) => r.data)
+
+export const grantAgent = (phone: string) =>
+  http.post<Profile>('/api/admin/agents', { phone }).then((r) => r.data)
+
+export const revokeAgent = (profileId: string) => http.delete(`/api/admin/agents/${profileId}`)
+
+/** The backend's `detail` message for a failed request, if it sent a readable one. */
+export function apiErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail
+    if (typeof detail === 'string') return detail
+    if (Array.isArray(detail) && typeof detail[0]?.msg === 'string') {
+      return detail[0].msg.replace(/^Value error, /, '')
+    }
+  }
+  return fallback
+}

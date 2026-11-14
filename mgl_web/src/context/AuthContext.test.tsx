@@ -27,6 +27,8 @@ const mockProfile: Profile = {
   verificationStatus: 'pending',
   isEmployer: false,
   isAdmin: false,
+  isAgent: false,
+  registeredByAgent: false,
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
 }
