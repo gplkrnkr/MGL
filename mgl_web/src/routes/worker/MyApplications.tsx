@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { listJobs, listMyApplications } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Card } from '../../components/ui/Card'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
@@ -21,7 +21,7 @@ export function MyApplications() {
   const jobTitle = (jobId: string) => jobs?.find((j) => j.id === jobId)?.title ?? 'Job'
 
   return (
-    <AppShell portalTitle="Find work" portalNavItems={workerNavItems}>
+    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
       <h1 className="text-2xl font-bold text-text mb-4">My applications</h1>
       {isLoading && <p className="text-text-muted">Loading…</p>}
       {isError && <ErrorBanner message="Couldn't load your applications. Try refreshing the page." />}
@@ -43,6 +43,6 @@ export function MyApplications() {
       {applications && applications.length === 0 && (
         <p className="text-text-muted">You haven't applied to any jobs yet.</p>
       )}
-    </AppShell>
+    </PortalLayout>
   )
 }

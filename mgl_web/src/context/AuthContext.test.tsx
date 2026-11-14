@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from './AuthContext'
 import { clearToken, getToken } from '../lib/session'
 import * as apiClient from '../api/client'
 import type { Profile } from '../api/types'
+import { AxiosError, AxiosHeaders } from 'axios'
+import { WrongRoleError } from '../lib/roleError'
 
 vi.mock('../api/client')
 
@@ -121,5 +123,53 @@ describe('AuthContext', () => {
 
     expect(result.current.profile).toBeNull()
     expect(getToken()).toBeNull()
+  })
+
+  it('rejects an employer number on the worker sign-in and leaves no session', async () => {
+    vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
+      access_token: 'tok-emp',
+      token_type: 'bearer',
+      user_id: 'p1',
+      phone: '+911234567890',
+    })
+    vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...mockProfile, isEmployer: true })
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    await act(async () => {
+      await expect(result.current.loginAsWorker('firebase-id-token')).rejects.toBeInstanceOf(WrongRoleError)
+    })
+    expect(getToken()).toBeNull()
+    expect(result.current.profile).toBeNull()
+  })
+
+  it('turns the backend 409 into a wrong-role error on the employer sign-in', async () => {
+    vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
+      access_token: 'tok-wkr',
+      token_type: 'bearer',
+      user_id: 'p1',
+      phone: '+911234567890',
+    })
+    const conflict = new AxiosError('Conflict', '409', undefined, undefined, {
+      status: 409,
+      statusText: 'Conflict',
+      data: { detail: 'registered as a worker' },
+      headers: {},
+      config: { headers: new AxiosHeaders() },
+    })
+    vi.mocked(apiClient.selectEmployerRole).mockRejectedValue(conflict)
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    let caught: unknown
+    await act(async () => {
+      caught = await result.current.loginAsEmployer('firebase-id-token').catch((e: unknown) => e)
+    })
+    expect(caught).toBeInstanceOf(WrongRoleError)
+    expect((caught as WrongRoleError).registeredAs).toBe('worker')
+    expect(getToken()).toBeNull()
+    expect(result.current.profile).toBeNull()
   })
 })

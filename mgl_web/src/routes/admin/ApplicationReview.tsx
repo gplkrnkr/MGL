@@ -30,7 +30,7 @@ export function ApplicationReview() {
   })
 
   return (
-    <PortalLayout title="Admin" navItems={adminNavItems}>
+    <PortalLayout title="Admin" homeTo="/admin/documents" navItems={adminNavItems}>
       <h1 className="text-2xl font-bold text-text mb-4">Application review</h1>
 
       {isLoading && <p className="text-text-muted">Loading…</p>}

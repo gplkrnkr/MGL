@@ -438,7 +438,7 @@
       <a href="#how">How It Works</a>
       <a href="#trust">Trust & Safety</a>
       <a href="#impact">Impact</a>
-      <a href="https://app.mygrandlabour.com/" class="nav-cta">Get Started →</a>
+      <a href="#cta" class="nav-cta">Get Started →</a>
     </div>
   </div>
 </nav>
@@ -457,7 +457,7 @@
         MGL connects 120 million unorganised Indian workers with verified employers, government missions, and international opportunities — through a single portable digital ID.
       </p>
       <div class="hero-actions fade-up delay-3">
-        <a href="https://app.mygrandlabour.com/" class="btn-primary">Find Work or Hire Workers →</a>
+        <a href="#cta" class="btn-primary">Find Work or Hire Workers →</a>
         <a href="#how" class="btn-ghost">How it works</a>
       </div>
     </div>
@@ -538,9 +538,9 @@
     <p class="section-desc">Whether you are looking for work, looking for workers, or tracking workforce outcomes — MGL has a dedicated experience for you.</p>
  
     <div class="persona-tab-bar">
-      <button class="persona-tab active" onclick="switchPersona('worker', this)">👷 Workers</button>
-      <button class="persona-tab" onclick="switchPersona('employer', this)">🏢 Employers</button>
-      <button class="persona-tab" onclick="switchPersona('govt', this)">🏛️ Government</button>
+      <button class="persona-tab active" data-persona="worker">👷 Workers</button>
+      <button class="persona-tab" data-persona="employer">🏢 Employers</button>
+      <button class="persona-tab" data-persona="govt">🏛️ Government</button>
     </div>
  
     <!-- WORKER -->
@@ -557,7 +557,7 @@
           <li>GCC overseas opportunities with zero upfront placement fee</li>
           <li>Your documents stored safely — Aadhaar, passport, medical, all in one place</li>
         </ul>
-        <a href="https://app.mygrandlabour.com/login" class="btn-primary" style="display:inline-flex; text-decoration:none; background:var(--teal)">Register Free →</a>
+        <a href="/login" class="btn-primary" style="display:inline-flex; text-decoration:none; background:var(--teal)">Register Free →</a>
       </div>
       <div class="persona-visual">
         <div class="mini-card" style="animation-delay:0.1s">
@@ -607,7 +607,7 @@
           <li>API access for integration with your existing HRMS (Enterprise)</li>
         </ul>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <a href="https://app.mygrandlabour.com/employer/login" class="btn-primary" style="display:inline-flex; text-decoration:none;">Start Free Trial →</a>
+          <a href="/employer/login" class="btn-primary" style="display:inline-flex; text-decoration:none;">Start Free Trial →</a>
           <a href="#diff" class="btn-primary" style="display:inline-flex; text-decoration:none; background:transparent; border:1.5px solid var(--orange); color:var(--orange);">See Plans</a>
         </div>
       </div>
@@ -877,22 +877,24 @@
       <h2>Ready to get started?</h2>
       <p>Join the platform that is formalising India's workforce — one verified identity at a time.</p>
       <div class="cta-cards">
-        <a href="https://app.mygrandlabour.com/login" class="cta-card">
+        <a href="/login" class="cta-card">
           <span class="cta-card-icon">👷</span>
           <span class="cta-card-label">I'm a Worker</span>
           <span class="cta-card-sub">Register your MGL ID free</span>
         </a>
-        <a href="https://app.mygrandlabour.com/employer/login" class="cta-card">
+        <a href="/employer/login" class="cta-card">
           <span class="cta-card-icon">🏢</span>
           <span class="cta-card-label">I'm an Employer</span>
           <span class="cta-card-sub">Start 90-day free trial</span>
         </a>
-        <a href="/app/dashboard" class="cta-card">
+        <!-- TODO: needs a contact address for MoU requests -->
+        <a href="#cta" class="cta-card">
           <span class="cta-card-icon">🏛️</span>
           <span class="cta-card-label">Government Partner</span>
           <span class="cta-card-sub">Request MoU discussion</span>
         </a>
-        <a href="https://app.mygrandlabour.com/" class="cta-card">
+        <!-- TODO: needs a contact address or pitch-deck link -->
+        <a href="#cta" class="cta-card">
           <span class="cta-card-icon">💼</span>
           <span class="cta-card-label">I'm an Investor</span>
           <span class="cta-card-sub">View our pitch deck</span>
@@ -912,9 +914,9 @@
       </div>
       <div class="footer-col">
         <h4>For Workers</h4>
-        <a href="https://app.mygrandlabour.com/login">Register Free</a>
+        <a href="/login">Register Free</a>
         <a href="/#how">How It Works</a>
-        <a href="/app/worker">Find Jobs</a>
+        <a href="/jobs">Find Jobs</a>
         <a href="/app/gcc">GCC Overseas</a>
         <a href="/app/worker">Document Vault</a>
       </div>
@@ -948,54 +950,10 @@
 </footer>
  
 <!-- ── FLOAT CTA ─────────────────────────────────────────────────────────────── -->
-<button class="float-cta" onclick="window.location.href='/app'">
+<button class="float-cta" data-href="#cta">
   Get Started →
 </button>
  
-<script>
-  // Nav scroll effect
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 20);
-  });
- 
-  // Persona tabs
-  function switchPersona(id, btn) {
-    document.querySelectorAll('.persona-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.persona-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('persona-' + id).classList.add('active');
-  }
- 
-  // Intersection observer for fade-up animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.1 });
- 
-  document.querySelectorAll('.trust-card, .step-card, .impact-card').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(24px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(el);
-  });
- 
-  // Animate stats on scroll
-  const statNums = document.querySelectorAll('.stat-num');
-  const statsBar = document.querySelector('.stats-bar');
-  let statsAnimated = false;
-  const statsObserver = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting && !statsAnimated) {
-      statsAnimated = true;
-      statsBar.style.opacity = '0';
-      statsBar.style.animation = 'fadeUp 0.6s ease forwards';
-    }
-  }, { threshold: 0.3 });
-  statsObserver.observe(statsBar);
-</script>
+<script src="/home.js"></script>
 </body>
 </html>

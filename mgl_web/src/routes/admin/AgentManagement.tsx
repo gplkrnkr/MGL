@@ -24,7 +24,7 @@ export function AgentManagement() {
   const revokeMutation = useMutation({ mutationFn: revokeAgent, onSuccess: refresh })
 
   return (
-    <PortalLayout title="Admin" navItems={adminNavItems}>
+    <PortalLayout title="Admin" homeTo="/admin/documents" navItems={adminNavItems}>
       <h1 className="text-2xl font-bold text-text mb-1">Field agents</h1>
       <p className="text-sm text-text-muted mb-4 max-w-2xl">
         Agents can register workers on their behalf. The person must have signed in once (at{' '}

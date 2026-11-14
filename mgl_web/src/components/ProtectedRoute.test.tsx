@@ -62,6 +62,15 @@ describe('WorkerRoute', () => {
     await waitFor(() => expect(screen.getByText('worker login page')).toBeInTheDocument())
   })
 
+  it('shows a wrong-role message, not the worker pages, to an employer', async () => {
+    setToken('tok-8')
+    vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isEmployer: true })
+
+    renderAt('/jobs', <WorkerRoute>worker content</WorkerRoute>)
+    await waitFor(() => expect(screen.getByText(/registered as an employer/)).toBeInTheDocument())
+    expect(screen.queryByText('worker content')).not.toBeInTheDocument()
+  })
+
   it('renders children when a worker is logged in', async () => {
     setToken('tok-1')
     vi.mocked(apiClient.getMyProfile).mockResolvedValue(baseProfile)
@@ -83,6 +92,15 @@ describe('EmployerRoute', () => {
 
     renderAt('/employer', <EmployerRoute>employer content</EmployerRoute>)
     await waitFor(() => expect(screen.getByText('employer login page')).toBeInTheDocument())
+  })
+
+  it('shows a wrong-role message to a registered worker', async () => {
+    setToken('tok-9')
+    vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, workerId: 'MGL-THR-00001' })
+
+    renderAt('/employer', <EmployerRoute>employer content</EmployerRoute>)
+    await waitFor(() => expect(screen.getByText(/registered as a worker/)).toBeInTheDocument())
+    expect(screen.queryByText('employer content')).not.toBeInTheDocument()
   })
 
   it('renders children for an employer', async () => {

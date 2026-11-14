@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { applyToJob, getJob, listMyApplications } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -65,7 +65,7 @@ export function JobDetail() {
   })
 
   return (
-    <AppShell portalTitle="Find work" portalNavItems={workerNavItems}>
+    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
       {isLoading && <p className="text-text-muted">Loading…</p>}
       {isError && <ErrorBanner message="Couldn't load this job. Try refreshing the page." />}
       {job && (
@@ -134,6 +134,6 @@ export function JobDetail() {
           )}
         </Card>
       )}
-    </AppShell>
+    </PortalLayout>
   )
 }

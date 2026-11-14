@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createJob, getJob, updateJob } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
@@ -69,7 +69,7 @@ export function JobForm() {
   })
 
   return (
-    <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
+    <PortalLayout title="Hire workers" homeTo="/employer" navItems={employerNavItems}>
       <h1 className="text-2xl font-bold text-text mb-4">{isEdit ? 'Edit job' : 'Post a job'}</h1>
       <Card className="max-w-lg flex flex-col gap-4">
         <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
@@ -128,6 +128,6 @@ export function JobForm() {
           <ErrorBanner message="Couldn't save this job. Try again." />
         )}
       </Card>
-    </AppShell>
+    </PortalLayout>
   )
 }

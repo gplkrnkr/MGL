@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createJob, listJobs, lookupWorker, selectEmployerRole } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -193,7 +193,7 @@ export function JobList() {
   const [tab, setTab] = useState<Tab>('feed')
 
   return (
-    <AppShell portalTitle="Find work" portalNavItems={workerNavItems}>
+    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
       <h1 className="text-2xl font-bold text-text mb-4">Worker App</h1>
 
       <WorkerLookupBox />
@@ -218,6 +218,6 @@ export function JobList() {
       </div>
 
       {tab === 'feed' ? <JobFeedTab /> : <PostJobTab />}
-    </AppShell>
+    </PortalLayout>
   )
 }

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { getJob, listApplicants, updateApplicantStatus } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Card } from '../../components/ui/Card'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
@@ -32,7 +32,7 @@ export function JobApplicants() {
   })
 
   return (
-    <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
+    <PortalLayout title="Hire workers" homeTo="/employer" navItems={employerNavItems}>
       <h1 className="text-2xl font-bold text-text mb-1">Applicants</h1>
       {job && <p className="text-text-muted mb-4">{job.title}</p>}
 
@@ -78,6 +78,6 @@ export function JobApplicants() {
       {applicants && applicants.length === 0 && (
         <p className="text-text-muted">No applicants yet.</p>
       )}
-    </AppShell>
+    </PortalLayout>
   )
 }

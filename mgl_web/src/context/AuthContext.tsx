@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { getMyProfile, selectEmployerRole, verifyFirebaseToken } from '../api/client'
+import axios from 'axios'
 import { clearToken, getToken, setToken } from '../lib/session'
+import { WrongRoleError } from '../lib/roleError'
 import type { Profile } from '../api/types'
 
 interface AuthContextValue {
@@ -46,6 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = await verifyFirebaseToken(firebaseIdToken)
     setToken(token.access_token)
     const me = await getMyProfile()
+    if (me.isEmployer) {
+      // One number, one role: don't leave an employer signed in on the worker side.
+      clearToken()
+      setProfile(null)
+      throw new WrongRoleError('employer')
+    }
     setProfile(me)
     return me
   }
@@ -53,7 +61,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginAsEmployer = async (firebaseIdToken: string) => {
     const token = await verifyFirebaseToken(firebaseIdToken)
     setToken(token.access_token)
-    const me = await selectEmployerRole()
+    let me: Profile
+    try {
+      me = await selectEmployerRole()
+    } catch (err) {
+      clearToken()
+      setProfile(null)
+      // 409: the backend says this number already belongs to a worker.
+      if (axios.isAxiosError(err) && err.response?.status === 409) throw new WrongRoleError('worker')
+      throw err
+    }
     setProfile(me)
     return me
   }

@@ -46,7 +46,7 @@ export function AgentPortal() {
   }
 
   return (
-    <PortalLayout title="Field agent" navItems={[{ to: '/agent', label: 'Register workers' }]}>
+    <PortalLayout title="Field agent" homeTo="/agent" navItems={[{ to: '/agent', label: 'Register workers' }]}>
       <div className="grid gap-6 md:grid-cols-2 max-w-5xl">
         <Card>
           <h1 className="text-xl font-bold text-text mb-1">Register a worker</h1>

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { getEmployerProfile, listMyJobs } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -14,7 +14,7 @@ export function Dashboard() {
   const needsCompanyName = company !== undefined && !company.companyName
 
   return (
-    <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
+    <PortalLayout title="Hire workers" homeTo="/employer" navItems={employerNavItems}>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-text">Your job postings</h1>
         <Link to="/employer/jobs/new">
@@ -26,7 +26,7 @@ export function Dashboard() {
         <Card className="mb-4 border-accent">
           <p className="text-text">
             Add your company name before posting jobs. Workers see it on every job you post.{' '}
-            <Link to="/employer/workers" className="text-primary font-semibold">
+            <Link to="/employer/company" className="text-primary font-semibold">
               Complete your company profile
             </Link>
           </p>
@@ -62,6 +62,6 @@ export function Dashboard() {
       {jobs && jobs.length === 0 && (
         <p className="text-text-muted">You haven't posted any jobs yet.</p>
       )}
-    </AppShell>
+    </PortalLayout>
   )
 }

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { phoneAuthErrorMessage, sendCode } from '../lib/phoneAuth'
+import { WrongRoleError } from '../lib/roleError'
 import { Button } from './ui/Button'
 import { TextField } from './ui/TextField'
 import { Card } from './ui/Card'
@@ -55,8 +56,12 @@ export function OtpLogin({ heading, subheading, onVerify, onSuccess }: Props) {
     try {
       await onVerify(idToken)
       onSuccess()
-    } catch {
-      setError('Signed in, but the server could not start your session. Please try again.')
+    } catch (err) {
+      setError(
+        err instanceof WrongRoleError
+          ? err.message
+          : 'Signed in, but the server could not start your session. Please try again.',
+      )
     } finally {
       setBusy(false)
     }

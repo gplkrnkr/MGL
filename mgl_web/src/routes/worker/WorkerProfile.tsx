@@ -8,7 +8,7 @@ import {
   updateMyProfile,
   uploadDocument,
 } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -130,7 +130,7 @@ export function WorkerProfile() {
 
   if (registered) {
     return (
-      <AppShell portalTitle="Find work" portalNavItems={workerNavItems}>
+      <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
         <h1 className="text-2xl font-bold text-text mb-4">My profile</h1>
         <Card className="max-w-md flex flex-col gap-4">
           <TextField label="Phone" value={profile.phone} disabled />
@@ -152,12 +152,12 @@ export function WorkerProfile() {
           {saveMutation.isSuccess && <p className="text-sm text-success">Saved.</p>}
           {saveMutation.isError && <ErrorBanner message="Couldn't save your profile. Try again." />}
         </Card>
-      </AppShell>
+      </PortalLayout>
     )
   }
 
   return (
-    <AppShell portalTitle="Find work" portalNavItems={workerNavItems}>
+    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-text mb-1 text-center">Complete your registration</h1>
         <p className="text-text-muted mb-6 text-center">Create a verified worker ID for MyGrandLabour.</p>
@@ -317,6 +317,6 @@ export function WorkerProfile() {
           </div>
         )}
       </div>
-    </AppShell>
+    </PortalLayout>
   )
 }

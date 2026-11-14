@@ -9,7 +9,7 @@ import { EmployerLogin } from './routes/employer/EmployerLogin'
 import { Dashboard } from './routes/employer/Dashboard'
 import { JobForm } from './routes/employer/JobForm'
 import { JobApplicants } from './routes/employer/JobApplicants'
-import { EmployerPortal } from './routes/employer/EmployerPortal'
+import { CompanyProfile, EmployerPortal } from './routes/employer/EmployerPortal'
 import { AdminLogin } from './routes/admin/AdminLogin'
 import { DocumentReview } from './routes/admin/DocumentReview'
 import { ApplicationReview } from './routes/admin/ApplicationReview'
@@ -92,6 +92,14 @@ export default function App() {
         element={
           <EmployerRoute>
             <JobApplicants />
+          </EmployerRoute>
+        }
+      />
+      <Route
+        path="/employer/company"
+        element={
+          <EmployerRoute>
+            <CompanyProfile />
           </EmployerRoute>
         }
       />

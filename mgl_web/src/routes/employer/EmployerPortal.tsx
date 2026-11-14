@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { getEmployerProfile, searchWorkers, updateEmployerProfile } from '../../api/client'
-import { AppShell } from '../../components/AppShell'
+import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -193,21 +194,26 @@ function RegisterCompanyTab() {
   )
 }
 
+/** /employer/company: the company profile on its own. */
+export function CompanyProfile() {
+  return (
+    <PortalLayout title="Hire workers" homeTo="/employer" navItems={employerNavItems}>
+      <h1 className="text-2xl font-bold text-text mb-1">Company profile</h1>
+      <p className="text-text-muted mb-4">Workers see your company name on every job you post.</p>
+      <RegisterCompanyTab />
+    </PortalLayout>
+  )
+}
+
+/** /employer/workers: worker search (preview) next to the company profile. */
 export function EmployerPortal() {
   const [tab, setTab] = useState<Tab>('search')
 
-  if (!showPreviews) {
-    return (
-      <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
-        <h1 className="text-2xl font-bold text-text mb-1">Company profile</h1>
-        <p className="text-text-muted mb-4">Workers see your company name on every job you post.</p>
-        <RegisterCompanyTab />
-      </AppShell>
-    )
-  }
+  // Worker search isn't live yet; without previews this page is just the company profile.
+  if (!showPreviews) return <Navigate to="/employer/company" replace />
 
   return (
-    <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
+    <PortalLayout title="Hire workers" homeTo="/employer" navItems={employerNavItems}>
       <h1 className="text-2xl font-bold text-text mb-1">Employer Portal</h1>
       <p className="text-text-muted mb-4">Search real workers and manage your company profile.</p>
 
@@ -231,6 +237,6 @@ export function EmployerPortal() {
       </div>
 
       {tab === 'search' ? <SearchWorkersTab /> : <RegisterCompanyTab />}
-    </AppShell>
+    </PortalLayout>
   )
 }
