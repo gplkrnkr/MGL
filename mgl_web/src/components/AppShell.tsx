@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import mglLogo from '../assets/mgl-logo.png'
 import { useAuth } from '../context/AuthContext'
+import { showPreviews } from '../lib/config'
 import { Button } from './ui/Button'
 
 interface PortalNavItem {
@@ -9,46 +10,51 @@ interface PortalNavItem {
   label: string
 }
 
-const navItems = [
+const allNavItems = [
   { to: '/', label: 'Home', icon: '🏠', description: 'Overview and sign-in' },
   {
     to: '/profile',
     label: 'Worker Registration',
     icon: '🪪',
-    description: 'Register workers → saved to the database',
+    description: 'Create your worker profile and MGL ID',
   },
-  { to: '/jobs', label: 'Worker App', icon: '📱', description: 'Live job feed from the real database' },
+  { to: '/jobs', label: 'Find Jobs', icon: '📱', description: 'Browse open jobs and apply' },
   {
-    to: '/employer/workers',
+    to: '/employer',
     label: 'Employer Portal',
     icon: '🏢',
-    description: 'Search live workers, register your company',
+    description: 'Register your company and post jobs',
   },
   {
+    preview: true,
     to: '/demo/agent-app',
     label: 'Agent App (MSC)',
     icon: '🧑‍💼',
     description: 'Field registrations with an offline queue (demo)',
   },
   {
+    preview: true,
     to: '/demo/fraud-detection',
     label: 'Fraud Detection',
     icon: '🛡️',
     description: 'Sample fraud flags (demo data)',
   },
   {
+    preview: true,
     to: '/demo/govt-dashboard',
     label: 'Govt Dashboard',
     icon: '📊',
     description: 'Aggregated stats (sample data)',
   },
   {
+    preview: true,
     to: '/demo/ai-matching',
     label: 'AI Matching Engine',
     icon: '🤖',
     description: 'Match workers to jobs (demo)',
   },
   {
+    preview: true,
     to: '/demo/gcc-overseas',
     label: 'GCC Overseas',
     icon: '✈️',
@@ -56,12 +62,16 @@ const navItems = [
   },
 ]
 
-const roleTabs = [
+const navItems = allNavItems.filter((item) => showPreviews || !('preview' in item))
+
+const allRoleTabs = [
   { label: 'Workers', icon: '👷', to: '/login', prefixes: ['/login', '/jobs', '/applications', '/profile'] },
   { label: 'Employers', icon: '🏢', to: '/employer/login', prefixes: ['/employer'] },
-  { label: 'Government', icon: '🏛️', to: '/demo/govt-dashboard', prefixes: ['/demo/govt-dashboard'] },
-  { label: 'GCC', icon: '✈️', to: '/demo/gcc-overseas', prefixes: ['/demo/gcc-overseas'] },
+  { label: 'Government', icon: '🏛️', to: '/demo/govt-dashboard', prefixes: ['/demo/govt-dashboard'], preview: true },
+  { label: 'GCC', icon: '✈️', to: '/demo/gcc-overseas', prefixes: ['/demo/gcc-overseas'], preview: true },
 ]
+
+const roleTabs = allRoleTabs.filter((tab) => showPreviews || !tab.preview)
 
 export function AppShell({
   title,

@@ -78,6 +78,14 @@ built-in `max-w-sm` etc. (found and fixed during initial build — every `max-w-
 `8px` instead of `24rem`). `--radius-*` doesn't have this conflict (only feeds `rounded-*`), so
 it does use named `sm/md/lg/full` tokens matching the mobile app's radius scale directly.
 
+## Unfinished features in production builds
+
+The demo pages (`/demo/*`), the field agent portal link and employer worker search (which needs
+`/api/employer/workers`, not in the backend yet) aren't ready for the public site. Production builds
+hide links to them unless `VITE_SHOW_PREVIEWS=true` is set at build time; dev builds always show
+them. With previews off, `/employer/workers` shows only the company profile. The routes still load
+if you type the URL.
+
 ## Not built yet
 
 - Document *upload* UI (mobile-only; workers upload from the app). Document *review* is on the

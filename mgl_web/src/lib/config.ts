@@ -26,6 +26,11 @@ export const missingConfig: string[] = [
 
 export const isConfigValid = missingConfig.length === 0 || !import.meta.env.PROD
 
+// The demo pages (/demo/*), the field agent portal and employer worker search aren't ready for the
+// public site yet. Production builds hide links to them unless VITE_SHOW_PREVIEWS=true; dev builds
+// always show them. The routes themselves still work if you know the URL.
+export const showPreviews = import.meta.env.VITE_SHOW_PREVIEWS === 'true' || !import.meta.env.PROD
+
 export const API_BASE_URL = rawApiUrl ?? DEV_FALLBACK_API_URL
 
 // The backend also serves signed file URLs (e.g. `/files/documents/...`) at its

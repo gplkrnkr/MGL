@@ -8,6 +8,7 @@ import { Card } from '../../components/ui/Card'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { Field } from '../../components/ui/Field'
 import { TextField } from '../../components/ui/TextField'
+import { showPreviews } from '../../lib/config'
 import { employerNavItems } from './nav'
 
 type Tab = 'search' | 'company'
@@ -194,6 +195,16 @@ function RegisterCompanyTab() {
 
 export function EmployerPortal() {
   const [tab, setTab] = useState<Tab>('search')
+
+  if (!showPreviews) {
+    return (
+      <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
+        <h1 className="text-2xl font-bold text-text mb-1">Company profile</h1>
+        <p className="text-text-muted mb-4">Workers see your company name on every job you post.</p>
+        <RegisterCompanyTab />
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>

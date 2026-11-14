@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { AppShell } from '../components/AppShell'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
+import { showPreviews } from '../lib/config'
 
 const modules = [
   {
@@ -67,28 +68,32 @@ export function Landing() {
           </Card>
         </div>
 
-        <p className="text-sm text-text-muted text-center mb-8">
-          Field agent?{' '}
-          <Link to="/agent/login" className="text-primary font-semibold">
-            Sign in to register workers
-          </Link>
-        </p>
+        {showPreviews && (
+          <>
+            <p className="text-sm text-text-muted text-center mb-8">
+              Field agent?{' '}
+              <Link to="/agent/login" className="text-primary font-semibold">
+                Sign in to register workers
+              </Link>
+            </p>
 
-        <h2 className="text-lg font-bold text-text mb-1">Explore where we're headed</h2>
-        <p className="text-sm text-text-muted mb-4">
-          Sample screens using demo data and simulated AI responses, not the live platform.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {modules.map((m) => (
-            <Link key={m.to} to={m.to}>
-              <Card className="h-full flex flex-col gap-2 hover:border-primary transition-colors">
-                <span className="text-2xl">{m.icon}</span>
-                <h3 className="text-lg font-bold text-text">{m.label}</h3>
-                <p className="text-sm text-text-muted">{m.description}</p>
-              </Card>
-            </Link>
-          ))}
-        </div>
+            <h2 className="text-lg font-bold text-text mb-1">Explore where we're headed</h2>
+            <p className="text-sm text-text-muted mb-4">
+              Sample screens using demo data and simulated AI responses, not the live platform.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {modules.map((m) => (
+                <Link key={m.to} to={m.to}>
+                  <Card className="h-full flex flex-col gap-2 hover:border-primary transition-colors">
+                    <span className="text-2xl">{m.icon}</span>
+                    <h3 className="text-lg font-bold text-text">{m.label}</h3>
+                    <p className="text-sm text-text-muted">{m.description}</p>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </AppShell>
   )

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { listMyJobs } from '../../api/client'
+import { getEmployerProfile, listMyJobs } from '../../api/client'
 import { AppShell } from '../../components/AppShell'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -10,6 +10,8 @@ import { employerNavItems } from './nav'
 
 export function Dashboard() {
   const { data: jobs, isLoading, isError } = useQuery({ queryKey: ['my-jobs'], queryFn: listMyJobs })
+  const { data: company } = useQuery({ queryKey: ['employer-me'], queryFn: getEmployerProfile })
+  const needsCompanyName = company !== undefined && !company.companyName
 
   return (
     <AppShell portalTitle="Employer dashboard" portalNavItems={employerNavItems}>
@@ -20,6 +22,16 @@ export function Dashboard() {
         </Link>
       </div>
 
+      {needsCompanyName && (
+        <Card className="mb-4 border-accent">
+          <p className="text-text">
+            Add your company name before posting jobs. Workers see it on every job you post.{' '}
+            <Link to="/employer/workers" className="text-primary font-semibold">
+              Complete your company profile
+            </Link>
+          </p>
+        </Card>
+      )}
       {isLoading && <p className="text-text-muted">Loading…</p>}
       {isError && <ErrorBanner message="Couldn't load your job postings. Try refreshing the page." />}
       <div className="flex flex-col gap-2">
