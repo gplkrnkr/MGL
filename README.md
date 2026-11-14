@@ -1,16 +1,25 @@
-# React + Vite
+# MyGrandLabour website
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The MyGrandLabour website, served from the backend's AWS EC2 server and talking to the FastAPI
+backend ([sajinaa-pk/mgl_backend](https://github.com/sajinaa-pk/mgl_backend)).
 
-Currently, two official plugins are available:
+| Path | What |
+| --- | --- |
+| [`mgl_web/`](mgl_web/) | The web app — worker, employer and admin portals (React + TypeScript + Vite). See its README. |
+| [`marketing/home.html`](marketing/home.html) | The static marketing page previously served at `mygrandlabour.com/`. |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## History
 
-## React Compiler
+This repo used to hold a proof of concept served by Vercel at `mygrandlabour.com/app`, which read and
+wrote a Supabase database directly from the browser. On the `website-aws` branch it is replaced by
+`mgl_web` (originally sajinaa-pk/my-grand-web), which was built for the FastAPI backend; Supabase and
+Vercel are no longer used. The proof of concept is still in `main`'s history.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Status
 
-## Expanding the Oxlint configuration
+Work in progress. Before the website can go live:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- the backend needs the endpoints and fields `mgl_web` expects (worker search, recent
+  registrations, worker lookup, employer GSTIN/contact fields, agent registration);
+- login needs an SMS provider for the backend's OTP endpoints;
+- the API must be served over HTTPS at `api.mygrandlabour.com`.

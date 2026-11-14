@@ -1,0 +1,38 @@
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
+    gzip_min_length 1024;
+
+    # nginx's add_header inheritance is all-or-nothing per block: a location that
+    # sets its own add_header (e.g. Cache-Control below) silently drops every
+    # server-level add_header unless it's repeated there too (done in /assets/ below).
+    #
+    # This file is processed by nginx's built-in envsubst-on-templates entrypoint
+    # (any *.template under /etc/nginx/templates/ gets ${VAR} substituted from the
+    # container's real environment at STARTUP, not build time -- unlike VITE_API_URL,
+    # API_ORIGIN is runtime-configurable: `docker run -e API_ORIGIN=https://api.example.com`
+    # without rebuilding the image). $uri below is nginx's own variable, not a shell
+    # env var, so envsubst leaves it alone -- only names that are actually set in the
+    # container's environment get substituted.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ${API_ORIGIN}; font-src 'self' data:" always;
+
+    location /assets/ {
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "DENY" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ${API_ORIGIN}; font-src 'self' data:" always;
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+    }
+
+    location / {
+        try_files $uri /index.html;
+    }
+}

@@ -1,0 +1,18 @@
+# Local/dev convenience for testing the built image. VITE_API_URL is a build-time
+# arg (see Dockerfile) -- `docker compose build` reads it from this file or a .env
+# next to this compose.yaml; changing it requires `docker compose build` again.
+# API_ORIGIN (the CSP's connect-src allowlist) is runtime-configurable -- override
+# it with `docker compose up -e` or by setting API_ORIGIN before `up` without
+# needing a rebuild.
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    container_name: mgl-web
+    environment:
+      API_ORIGIN: ${API_ORIGIN:-${VITE_API_URL:-http://localhost:8000}}
+    ports:
+      - "8080:80"
+    restart: unless-stopped
