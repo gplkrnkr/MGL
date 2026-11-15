@@ -38,8 +38,8 @@
   var crew = document.querySelector('.crew');
   if (crew) {
     var columns = [
-      [['mason-1', 'Mason'], ['construction-1', 'Construction'], ['mason-2', 'Mason']],
-      [['welder-1', 'Welder'], ['technician-1', 'Technician'], ['plumber-1', 'Plumber']],
+      [['mason-1', 'Mason'], ['construction-1', 'Construction'], ['mason-3', 'Mason']],
+      [['welder-2', 'Welder'], ['plumber-1', 'Plumber'], ['plumber-2', 'Plumber']],
       [['electrician-1', 'Electrician'], ['electrician-2', 'Electrician'], ['factory-1', 'Factory worker']],
       [['housekeeping-1', 'Housekeeping'], ['facility-1', 'Facility staff'], ['housekeeping-2', 'Housekeeping']],
     ];
