@@ -21,6 +21,10 @@ const MESSAGES: Record<string, { title: string; body: string }> = {
     title: 'That link has expired',
     body: 'Please start the verification again from your profile.',
   },
+  wrong_browser: {
+    title: 'Please use the same browser',
+    body: 'Start the verification from your profile and finish it in the same browser on the same phone.',
+  },
   aadhaar_not_linked: {
     title: 'Aadhaar not found in DigiLocker',
     body: 'Your DigiLocker account has no Aadhaar linked. Link it in the DigiLocker app, then try again.',

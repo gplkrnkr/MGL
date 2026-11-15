@@ -33,8 +33,9 @@ export function DigilockerVerify() {
       <p className="font-semibold text-text">Verify your Aadhaar with DigiLocker</p>
       <p className="text-text-muted">
         You'll sign in to DigiLocker, the Government of India's document app, and agree to share your
-        Aadhaar with My Grand Labour. We keep only that it's verified, the last 4 digits and the date.
-        We never store your Aadhaar number, photo or address.
+        Aadhaar with My Grand Labour. We keep only the result: that it's verified, the date, the last 4
+        digits, whether the name matches your profile, and your DigiLocker account ID (so one Aadhaar
+        can't be used on two accounts). We never store your Aadhaar number, photo or address.
       </p>
       <Button
         onClick={() => startMutation.mutate()}
