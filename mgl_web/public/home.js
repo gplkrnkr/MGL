@@ -34,10 +34,9 @@
   // Hero portraits: every few seconds ONE strip crossfades to its next worker,
   // taking turns left to right, so the change is gradual rather than all at once.
   // Each strip keeps its colour and cycles through its own column of portraits.
-  // Pauses while hovered or when the tab is hidden; reduced-motion users get no rotation.
+  // Pauses only while the tab is hidden. Reduced-motion users get a plain fade (no zoom, see CSS).
   var crew = document.querySelector('.crew');
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (crew && !reduceMotion) {
+  if (crew) {
     var columns = [
       [['mason-1', 'Mason'], ['construction-1', 'Construction'], ['mason-2', 'Mason']],
       [['welder-1', 'Welder'], ['technician-1', 'Technician'], ['plumber-1', 'Plumber']],
@@ -48,7 +47,6 @@
     var strips = Array.prototype.slice.call(crew.querySelectorAll('.strip'));
     var shown = strips.map(function () { return 0; }); // index into each column
     var turn = 0; // which strip changes next
-    var hovering = false;
     var timer = null;
 
     var url = function (name) { return '/portraits/' + name + '.webp'; };
@@ -86,13 +84,10 @@
 
     var schedule = function () {
       clearTimeout(timer);
-      if (hovering || document.hidden) return;
+      if (document.hidden) return;
       timer = setTimeout(function () { advance().then(schedule); }, STEP);
     };
 
-    var area = crew.querySelector('.crew-strips');
-    area.addEventListener('mouseenter', function () { hovering = true; schedule(); });
-    area.addEventListener('mouseleave', function () { hovering = false; schedule(); });
     document.addEventListener('visibilitychange', schedule);
     window.addEventListener('load', function () {
       columns.forEach(function (col) { decode(url(col[1][0])); });

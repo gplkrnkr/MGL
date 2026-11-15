@@ -139,7 +139,8 @@
   .crew-foot { display: flex; align-items: center; gap: 16px; padding: 0 8px; }
   .crew-foot p { flex: 1; font-size: 14px; color: var(--muted); }
   .crew-foot strong { color: var(--navy); }
-  @media (prefers-reduced-motion: reduce) { .strip img, .strip figcaption { transition: none; } .strip img, .strip img.on { transform: skewX(9deg); } }
+  /* Reduced motion: keep the gentle fade, drop the zoom. */
+  @media (prefers-reduced-motion: reduce) { .strip img, .strip img.on { transform: skewX(9deg); transition: opacity 1.6s ease-in-out; } }
 
   /* ── STATS ─────────────────────────────────────────────────────── */
   .stats { padding: 40px 0; border-bottom: 1px solid var(--line); }
