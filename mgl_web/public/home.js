@@ -30,4 +30,42 @@
       });
     });
   });
+
+  // Hero portraits: the shuffle button cycles through sets of four workers.
+  var crew = document.querySelector('.crew');
+  var shuffle = crew && crew.querySelector('.shuffle');
+  if (crew && shuffle) {
+    var sets = [
+      [['mason-1', 'Mason'], ['welder-1', 'Welder'], ['electrician-1', 'Electrician'], ['housekeeping-1', 'Housekeeping']],
+      [['construction-1', 'Construction'], ['technician-1', 'Technician'], ['electrician-2', 'Electrician'], ['facility-1', 'Facility staff']],
+      [['mason-2', 'Mason'], ['plumber-1', 'Plumber'], ['factory-1', 'Factory worker'], ['housekeeping-2', 'Housekeeping']],
+    ];
+    var strips = crew.querySelectorAll('.strip');
+    var current = 0;
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var apply = function (set) {
+      strips.forEach(function (strip, i) {
+        strip.querySelector('img').src = '/portraits/' + set[i][0] + '.webp';
+        strip.querySelector('figcaption').textContent = set[i][1];
+      });
+    };
+    var preload = function (set) {
+      set.forEach(function (item) { new Image().src = '/portraits/' + item[0] + '.webp'; });
+    };
+
+    shuffle.addEventListener('click', function () {
+      current = (current + 1) % sets.length;
+      var next = sets[current];
+      preload(sets[(current + 1) % sets.length]);
+      if (reduceMotion) { apply(next); return; }
+      crew.classList.add('swapping');
+      setTimeout(function () {
+        apply(next);
+        crew.classList.remove('swapping');
+      }, 250);
+    });
+    // Warm the cache for the first shuffle once the page has settled.
+    window.addEventListener('load', function () { preload(sets[1]); });
+  }
 })();

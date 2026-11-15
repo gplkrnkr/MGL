@@ -123,23 +123,24 @@
   .others { font-size: 14px; color: var(--muted); }
   .others a { font-weight: 600; }
 
-  .id-wrap { flex: 1 1 380px; min-width: 0; display: flex; justify-content: center; }
-  .id-card { width: 100%; max-width: 420px; border-radius: 18px; background: var(--navy); color: #FFFFFF; padding: 28px; box-shadow: 0 24px 48px rgba(5,37,78,0.18); display: flex; flex-direction: column; gap: 24px; }
-  .id-top { display: flex; align-items: center; justify-content: space-between; }
-  .id-title { font-family: Archivo, sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
-  .id-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; padding: 4px 8px; border: 1px solid var(--navy-line); border-radius: 6px; color: var(--on-navy); }
-  .id-person { display: flex; align-items: center; gap: 16px; }
-  .avatar { width: 72px; height: 72px; border-radius: 12px; background: var(--navy-2); display: flex; align-items: center; justify-content: center; font-family: Archivo, sans-serif; font-weight: 800; font-size: 26px; color: var(--yellow); }
-  .id-name { font-family: Archivo, sans-serif; font-weight: 700; font-size: 1.35rem; display: block; }
-  .id-role { font-size: 14px; color: var(--on-navy); }
-  .id-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px 0; border-top: 1px solid var(--navy-3); border-bottom: 1px solid var(--navy-3); }
-  .id-grid div { display: flex; flex-direction: column; }
-  .id-grid small { font-size: 12px; color: var(--on-navy); }
-  .id-grid b { font-family: Archivo, sans-serif; font-weight: 700; font-size: 1.6rem; }
-  .id-grid em { font-style: normal; font-weight: 600; }
-  .id-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .verified-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: var(--green); font-size: 13px; font-weight: 600; }
-  .id-num { font-size: 13px; color: var(--on-navy); font-family: ui-monospace, monospace; }
+  /* Hero portraits: four slanted strips, each with a trade label on a brand-colour band. */
+  .crew { flex: 1 1 380px; min-width: 0; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  .crew-strips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; height: 440px; padding: 0 32px; }
+  .strip { --band: var(--navy); --label: var(--yellow); position: relative; margin: 0; overflow: hidden; border-radius: 14px; transform: skewX(-9deg); background: var(--line); border-right: 4px solid var(--band); }
+  .strip:nth-child(2) { --band: var(--orange); --label: var(--navy); }
+  .strip:nth-child(3) { --band: var(--blue); --label: #FFFFFF; }
+  .strip:nth-child(4) { --band: var(--yellow); --label: var(--navy); }
+  .strip img { position: absolute; top: 0; left: -35%; width: 170%; max-width: none; height: 100%; object-fit: cover; object-position: 50% 20%; transform: skewX(9deg); transition: opacity 0.25s ease; }
+  .strip::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 42%, var(--band) 94%); }
+  .strip figcaption { position: absolute; z-index: 1; left: 50%; bottom: 16px; writing-mode: vertical-rl; transform: translateX(-50%) skewX(9deg) rotate(180deg); font-family: Archivo, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label); white-space: nowrap; transition: opacity 0.25s ease; }
+  .crew.swapping .strip img, .crew.swapping .strip figcaption { opacity: 0; }
+  .crew-foot { display: flex; align-items: center; gap: 16px; padding: 0 8px; }
+  .crew-foot p { flex: 1; font-size: 14px; color: var(--muted); }
+  .crew-foot strong { color: var(--navy); }
+  .shuffle { flex: none; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line-2); background: #FFFFFF; color: var(--navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+  .shuffle:hover { border-color: var(--navy); }
+  .shuffle:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .strip img, .strip figcaption { transition: none; } }
 
   /* ── STATS ─────────────────────────────────────────────────────── */
   .stats { padding: 40px 0; border-bottom: 1px solid var(--line); }
@@ -290,8 +291,8 @@
     .lead { font-size: 1.05rem; }
     .brand img { height: 42px; }
     .no-phone-actions .btn { flex: 1 1 0; }
-    .id-card { padding: 20px; gap: 16px; }
-    .avatar { width: 56px; height: 56px; font-size: 20px; }
+    .crew-strips { height: 320px; padding: 0 20px; gap: 8px; }
+    .strip figcaption { font-size: 11px; bottom: 12px; }
     .stats { padding: 28px 0; }
     .stats-grid { gap: 20px 16px; }
     .stat b { font-size: 1.75rem; }
@@ -343,6 +344,7 @@
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></symbol>
   <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m5 7-3 7a3 3 0 0 0 6 0z"/><path d="m19 7-3 7a3 3 0 0 0 6 0z"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
 </svg>
 
@@ -400,23 +402,16 @@
       <p class="others">Government partner? <a href="mailto:contact@mygrandlabour.com?subject=MoU%20discussion">Request an MoU discussion</a> · Investor? <a href="mailto:contact@mygrandlabour.com?subject=Investor%20enquiry">Ask for the deck</a></p>
     </div>
 
-    <div class="id-wrap">
-      <div class="id-card" role="img" aria-label="Sample MGL Digital Labour ID card for a mason with nine years of experience and 18 verified placements">
-        <div class="id-top"><span class="id-title">MGL DIGITAL LABOUR ID</span><span class="id-tag">SAMPLE</span></div>
-        <div class="id-person">
-          <div class="avatar">RS</div>
-          <div><span class="id-name">R. Selvam</span><span class="id-role">Mason · 9 years experience</span></div>
-        </div>
-        <div class="id-grid">
-          <div><small>Verified placements</small><b>18</b></div>
-          <div><small>Rating</small><b>4.8 / 5</b></div>
-          <div><small>Skill assessment</small><em>Passed</em></div>
-          <div><small>Languages</small><em>Tamil, Hindi</em></div>
-        </div>
-        <div class="id-foot">
-          <span class="verified-pill"><svg class="icon sm" aria-hidden="true"><use href="#i-shield"/></svg>Aadhaar verified</span>
-          <span class="id-num">MGL-CHE-12345</span>
-        </div>
+    <div class="crew" role="group" aria-label="Workers who find jobs on MGL">
+      <div class="crew-strips">
+        <figure class="strip"><img src="/portraits/mason-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Mason</figcaption></figure>
+        <figure class="strip"><img src="/portraits/welder-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Welder</figcaption></figure>
+        <figure class="strip"><img src="/portraits/electrician-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Electrician</figcaption></figure>
+        <figure class="strip"><img src="/portraits/housekeeping-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Housekeeping</figcaption></figure>
+      </div>
+      <div class="crew-foot">
+        <p><strong>Masons, welders, electricians, facility staff and more.</strong> Free for workers to register and apply.</p>
+        <button type="button" class="shuffle" aria-label="Show other workers"><svg class="icon sm" aria-hidden="true"><use href="#i-refresh"/></svg></button>
       </div>
     </div>
   </div>
