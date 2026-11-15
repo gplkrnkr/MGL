@@ -1,4 +1,6 @@
-import { Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import { pageTitle } from './lib/pageTitles'
 import { Landing } from './routes/Landing'
 import { WorkerLogin } from './routes/worker/WorkerLogin'
 import { JobList } from './routes/worker/JobList'
@@ -25,9 +27,19 @@ import { GovtDashboardDemo } from './routes/demo/GovtDashboardDemo'
 import { AiMatchingDemo } from './routes/demo/AiMatchingDemo'
 import { GccOverseasDemo } from './routes/demo/GccOverseasDemo'
 
+function DocumentTitle() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    document.title = pageTitle(pathname)
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
-    <Routes>
+    <>
+      <DocumentTitle />
+      <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<WorkerLogin />} />
       <Route
@@ -161,6 +173,7 @@ export default function App() {
       <Route path="/demo/gcc-overseas" element={<GccOverseasDemo />} />
 
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
+    </>
   )
 }

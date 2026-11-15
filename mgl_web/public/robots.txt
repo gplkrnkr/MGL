@@ -1,0 +1,9 @@
+# https://mygrandlabour.com
+# App pages (sign-in, jobs, profiles) are left crawlable on purpose: they carry
+# <meta name="robots" content="noindex">, which crawlers can only see if allowed in.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /files/
+
+Sitemap: https://mygrandlabour.com/sitemap.xml
