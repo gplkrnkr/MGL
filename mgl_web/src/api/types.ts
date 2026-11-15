@@ -143,3 +143,11 @@ export interface AgentWorkerInput {
   skills: string[]
   location: ProfileLocation | null
 }
+
+export interface DigilockerStatus {
+  enabled: boolean
+  verified: boolean
+  verifiedAt: string | null
+  last4: string | null
+  nameMatch: boolean | null
+}

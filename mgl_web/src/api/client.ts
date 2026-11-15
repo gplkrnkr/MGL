@@ -7,6 +7,7 @@ import type {
   AdminDocument,
   Applicant,
   Application,
+  DigilockerStatus,
   Document,
   EmployerProfile,
   Job,
@@ -57,6 +58,31 @@ export const updateMyProfile = (payload: Partial<Profile>) =>
 
 export const completeRegistration = () =>
   http.post<Profile>('/api/profile/me/complete-registration').then((r) => r.data)
+
+// ---- Aadhaar verification through DigiLocker ----
+
+export const digilockerStatusKey = ['digilocker-status']
+
+const DIGILOCKER_OFF: DigilockerStatus = {
+  enabled: false,
+  verified: false,
+  verifiedAt: null,
+  last4: null,
+  nameMatch: null,
+}
+
+// A backend without the DigiLocker endpoints (404) counts as "feature off".
+export const getDigilockerStatus = () =>
+  http
+    .get<DigilockerStatus>('/api/digilocker/status')
+    .then((r) => r.data)
+    .catch((error) => {
+      if (axios.isAxiosError(error) && error.response?.status === 404) return DIGILOCKER_OFF
+      throw error
+    })
+
+export const startDigilockerVerification = () =>
+  http.post<{ authorizeUrl: string }>('/api/digilocker/start').then((r) => r.data.authorizeUrl)
 
 export const getRecentRegistrations = () =>
   http.get<RecentRegistration[]>('/api/profile/recent-registrations').then((r) => r.data)

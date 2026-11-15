@@ -8,6 +8,7 @@ import {
   updateMyProfile,
   uploadDocument,
 } from '../../api/client'
+import { DigilockerVerify } from '../../components/DigilockerVerify'
 import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -241,6 +242,7 @@ export function WorkerProfile() {
           {step === 3 && (
             <>
               <h2 className="text-lg font-bold text-primary text-center mb-1">ID Verification</h2>
+              <DigilockerVerify />
               <p className="text-sm text-text-muted text-center">
                 Upload a photo of your Aadhaar or another government ID for verification.
               </p>

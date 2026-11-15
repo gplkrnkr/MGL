@@ -5,6 +5,7 @@ import { JobList } from './routes/worker/JobList'
 import { JobDetail } from './routes/worker/JobDetail'
 import { MyApplications } from './routes/worker/MyApplications'
 import { WorkerProfile } from './routes/worker/WorkerProfile'
+import { DigilockerResult } from './routes/worker/DigilockerResult'
 import { EmployerLogin } from './routes/employer/EmployerLogin'
 import { Dashboard } from './routes/employer/Dashboard'
 import { JobForm } from './routes/employer/JobForm'
@@ -58,6 +59,14 @@ export default function App() {
         element={
           <WorkerRoute>
             <WorkerProfile />
+          </WorkerRoute>
+        }
+      />
+      <Route
+        path="/worker/verify/digilocker"
+        element={
+          <WorkerRoute>
+            <DigilockerResult />
           </WorkerRoute>
         }
       />
