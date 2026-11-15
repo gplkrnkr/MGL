@@ -130,10 +130,13 @@
   .strip:nth-child(2) { --band: var(--orange); --label: var(--navy); }
   .strip:nth-child(3) { --band: var(--blue); --label: #FFFFFF; }
   .strip:nth-child(4) { --band: var(--yellow); --label: var(--navy); }
-  .strip img { position: absolute; top: 0; left: -35%; width: 170%; max-width: none; height: 100%; object-fit: cover; object-position: 50% 20%; transform: skewX(9deg); transition: opacity 0.25s ease; }
+  .strip:nth-child(2) { --i: 1; } .strip:nth-child(3) { --i: 2; } .strip:nth-child(4) { --i: 3; }
+  /* Two stacked layers per strip; the next worker fades in over the current one, strip by strip. */
+  .strip img { position: absolute; top: 0; left: -35%; width: 170%; max-width: none; height: 100%; object-fit: cover; object-position: 50% 20%; transform: skewX(9deg); opacity: 0; transition: opacity 0.9s ease; transition-delay: calc(var(--i, 0) * 180ms); }
+  .strip img.on { opacity: 1; }
   .strip::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 42%, var(--band) 94%); }
-  .strip figcaption { position: absolute; z-index: 1; left: 50%; bottom: 16px; writing-mode: vertical-rl; transform: translateX(-50%) skewX(9deg) rotate(180deg); font-family: Archivo, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label); white-space: nowrap; transition: opacity 0.25s ease; }
-  .crew.swapping .strip img, .crew.swapping .strip figcaption { opacity: 0; }
+  .strip figcaption { position: absolute; z-index: 1; left: 50%; bottom: 16px; writing-mode: vertical-rl; transform: translateX(-50%) skewX(9deg) rotate(180deg); font-family: Archivo, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label); white-space: nowrap; transition: opacity 0.4s ease; transition-delay: calc(var(--i, 0) * 180ms); }
+  .strip.relabel figcaption { opacity: 0; }
   .crew-foot { display: flex; align-items: center; gap: 16px; padding: 0 8px; }
   .crew-foot p { flex: 1; font-size: 14px; color: var(--muted); }
   .crew-foot strong { color: var(--navy); }
@@ -344,7 +347,8 @@
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></symbol>
   <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="m5 7-3 7a3 3 0 0 0 6 0z"/><path d="m19 7-3 7a3 3 0 0 0 6 0z"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
-  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14"/><path d="M15 5v14"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
 </svg>
 
@@ -404,14 +408,14 @@
 
     <div class="crew" role="group" aria-label="Workers who find jobs on MGL">
       <div class="crew-strips">
-        <figure class="strip"><img src="/portraits/mason-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Mason</figcaption></figure>
-        <figure class="strip"><img src="/portraits/welder-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Welder</figcaption></figure>
-        <figure class="strip"><img src="/portraits/electrician-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Electrician</figcaption></figure>
-        <figure class="strip"><img src="/portraits/housekeeping-1.webp" alt="" width="300" height="500" decoding="async"><figcaption>Housekeeping</figcaption></figure>
+        <figure class="strip"><img class="layer on" src="/portraits/mason-1.webp" alt="" width="300" height="500" decoding="async"><img class="layer" alt="" width="300" height="500" decoding="async"><figcaption>Mason</figcaption></figure>
+        <figure class="strip"><img class="layer on" src="/portraits/welder-1.webp" alt="" width="300" height="500" decoding="async"><img class="layer" alt="" width="300" height="500" decoding="async"><figcaption>Welder</figcaption></figure>
+        <figure class="strip"><img class="layer on" src="/portraits/electrician-1.webp" alt="" width="300" height="500" decoding="async"><img class="layer" alt="" width="300" height="500" decoding="async"><figcaption>Electrician</figcaption></figure>
+        <figure class="strip"><img class="layer on" src="/portraits/housekeeping-1.webp" alt="" width="300" height="500" decoding="async"><img class="layer" alt="" width="300" height="500" decoding="async"><figcaption>Housekeeping</figcaption></figure>
       </div>
       <div class="crew-foot">
         <p><strong>Masons, welders, electricians, facility staff and more.</strong> Free for workers to register and apply.</p>
-        <button type="button" class="shuffle" aria-label="Show other workers"><svg class="icon sm" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+        <button type="button" class="shuffle" aria-pressed="false" aria-label="Pause the changing portraits"><svg class="icon sm" aria-hidden="true"><use href="#i-pause"/></svg></button>
       </div>
     </div>
   </div>
