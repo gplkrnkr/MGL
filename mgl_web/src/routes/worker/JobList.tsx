@@ -53,7 +53,7 @@ function JobFeedTab() {
             className="w-full h-12 pl-11 pr-4 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:border-primary"
           />
         </label>
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap" role="group" aria-label="Filter by trade">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Filter by trade">
           {['All', ...TRADES].map((t) => (
             <button
               key={t}
