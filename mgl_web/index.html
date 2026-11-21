@@ -9,9 +9,8 @@
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- App pages (sign-in, portals) need an account and shouldn't appear in search.
-         The public home page is a separate file (public/home.html) and stays indexable. -->
-    <meta name="robots" content="noindex" />
+    <!-- Private app pages get "X-Robots-Tag: noindex" from nginx (deploy/nginx). The public job
+         pages (/jobs, /jobs/:id) stay indexable; sample and closed jobs add their own noindex. -->
     <meta
       name="description"
       content="My Grand Labour connects local workers with job opportunities and lets employers post jobs and review applicants."

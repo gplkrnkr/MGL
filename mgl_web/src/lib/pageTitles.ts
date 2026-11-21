@@ -6,7 +6,7 @@ const SITE = 'My Grand Labour'
 const TITLES: [pattern: string, title: string][] = [
   ['/login', 'Sign in'],
   ['/jobs/:jobId', 'Job details'],
-  ['/jobs', 'Find work'],
+  ['/jobs', 'Jobs near you'],
   ['/applications', 'My applications'],
   ['/profile', 'My profile'],
   ['/worker/verify/digilocker', 'Aadhaar verification'],

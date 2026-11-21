@@ -42,22 +42,10 @@ export default function App() {
       <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<WorkerLogin />} />
-      <Route
-        path="/jobs"
-        element={
-          <WorkerRoute>
-            <JobList />
-          </WorkerRoute>
-        }
-      />
-      <Route
-        path="/jobs/:jobId"
-        element={
-          <WorkerRoute>
-            <JobDetail />
-          </WorkerRoute>
-        }
-      />
+      {/* Public: anyone can browse jobs; applying needs a worker sign-in. */}
+      <Route path="/jobs" element={<JobList />} />
+      {/* Public: anyone can browse jobs; applying needs a worker sign-in. */}
+      <Route path="/jobs/:jobId" element={<JobDetail />} />
       <Route
         path="/applications"
         element={

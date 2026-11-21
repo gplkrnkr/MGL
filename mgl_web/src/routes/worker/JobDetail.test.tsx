@@ -61,3 +61,29 @@ describe('JobDetail sample jobs', () => {
     expect(screen.queryByText('Sample')).not.toBeInTheDocument()
   })
 })
+
+describe('JobDetail when signed out', () => {
+  beforeEach(() => {
+    vi.resetAllMocks()
+  })
+
+  it('offers "Sign in to apply", adds JobPosting data and skips the applications query', async () => {
+    vi.mocked(apiClient.getJob).mockResolvedValue(job)
+    renderDetail()
+    expect(await screen.findByRole('button', { name: 'Sign in to apply' })).toBeInTheDocument()
+    expect(apiClient.listMyApplications).not.toHaveBeenCalled()
+    const ld = document.head.querySelector('script[type="application/ld+json"]')
+    expect(JSON.parse(ld!.textContent!)['@type']).toBe('JobPosting')
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      'https://mygrandlabour.com/jobs/j1',
+    )
+  })
+
+  it('marks a sample job noindex with no JobPosting data', async () => {
+    vi.mocked(apiClient.getJob).mockResolvedValue({ ...job, isSample: true })
+    renderDetail()
+    await screen.findByText('Sample')
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex')
+    expect(document.head.querySelector('script[type="application/ld+json"]')).toBeNull()
+  })
+})

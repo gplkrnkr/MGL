@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { applyToJob, getJob, listMyApplications } from '../../api/client'
-import { PortalLayout } from '../../components/PortalLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useAuth } from '../../context/AuthContext'
 import type { Job } from '../../api/types'
-import { workerNavItems } from './nav'
+import { jobPageHead, usePageHead } from '../../lib/seo'
+import { JobsLayout } from './JobsLayout'
 
 function buildJobTips(job: Job, workerSkills: string[]): string[] {
   const tips: string[] = []
@@ -49,10 +49,16 @@ export function JobDetail() {
     enabled: !!jobId,
   })
 
+  const navigate = useNavigate()
+  const isWorker = !!profile && !profile.isEmployer
+
   const { data: applications } = useQuery({
     queryKey: ['applications'],
     queryFn: listMyApplications,
+    enabled: isWorker,
   })
+
+  usePageHead(job ? jobPageHead(job) : null)
 
   const alreadyApplied = applied || applications?.some((a) => a.jobId === jobId)
 
@@ -65,7 +71,7 @@ export function JobDetail() {
   })
 
   return (
-    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
+    <JobsLayout>
       {isLoading && <p className="text-text-muted">Loading…</p>}
       {isError && <ErrorBanner message="Couldn't load this job. Try refreshing the page." />}
       {job && (
@@ -125,7 +131,24 @@ export function JobDetail() {
             )}
           </div>
 
-          {alreadyApplied ? (
+          {!profile ? (
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={() => navigate(`/login?next=${encodeURIComponent(`/jobs/${job.id}`)}`)}
+                disabled={job.status !== 'open'}
+                className="w-fit"
+              >
+                Sign in to apply
+              </Button>
+              <p className="text-sm text-text-muted">
+                Free for workers. Sign in with your phone number, then apply in one tap.
+              </p>
+            </div>
+          ) : profile.isEmployer ? (
+            <p className="text-sm text-text-muted">
+              You&apos;re signed in as an employer. Workers apply with their own phone number.
+            </p>
+          ) : alreadyApplied ? (
             <p className="text-success font-semibold">You've applied to this job.</p>
           ) : (
             <Button
@@ -141,6 +164,6 @@ export function JobDetail() {
           )}
         </Card>
       )}
-    </PortalLayout>
+    </JobsLayout>
   )
 }

@@ -6,7 +6,7 @@ import nginx from '../../../deploy/nginx/mygrandlabour.conf?raw'
 describe('pageTitle', () => {
   it('names each kind of page', () => {
     expect(pageTitle('/login')).toBe('Sign in · My Grand Labour')
-    expect(pageTitle('/jobs')).toBe('Find work · My Grand Labour')
+    expect(pageTitle('/jobs')).toBe('Jobs near you · My Grand Labour')
     expect(pageTitle('/jobs/abc')).toBe('Job details · My Grand Labour')
     expect(pageTitle('/employer/jobs/abc/applicants')).toBe('Applicants · My Grand Labour')
     expect(pageTitle('/employer/jobs/new')).toBe('Post a job · My Grand Labour')
@@ -27,5 +27,19 @@ describe('pageTitle', () => {
     const allowed = new Set(rule![1].split('|'))
     const segments = [...app.matchAll(/path="\/([a-z-]+)/g)].map((m) => m[1])
     for (const segment of segments) expect(allowed, segment).toContain(segment)
+  })
+})
+
+describe('nginx noindex map', () => {
+  // Every app route is private (noindex) except the public job pages.
+  it('marks every app route noindex except /jobs', () => {
+    const map = nginx.match(/map \$request_uri \$mgl_robots_tag \{[^}]*~\^\/\(([a-z|]+)\)/)
+    expect(map, 'noindex map in mygrandlabour.conf').not.toBeNull()
+    const noindex = new Set(map![1].split('|'))
+    const segments = new Set([...app.matchAll(/path="\/([a-z-]+)/g)].map((m) => m[1]))
+    expect(noindex.has('jobs')).toBe(false)
+    for (const segment of segments) {
+      if (segment !== 'jobs') expect(noindex, segment).toContain(segment)
+    }
   })
 })

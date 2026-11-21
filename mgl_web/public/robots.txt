@@ -1,8 +1,11 @@
 # https://mygrandlabour.com
-# App pages (sign-in, jobs, profiles) are left crawlable on purpose: they carry
-# <meta name="robots" content="noindex">, which crawlers can only see if allowed in.
+# Private app pages (sign-in, profiles, dashboards) are left crawlable on purpose: they're sent
+# with an "X-Robots-Tag: noindex" header, which crawlers can only see if allowed in.
+# Job pages (/jobs, /jobs/<id>) are public and meant to be indexed.
 User-agent: *
 Allow: /
+# Public job pages load their jobs from these, so search engines need them to render the pages.
+Allow: /api/jobs
 Disallow: /api/
 Disallow: /files/
 

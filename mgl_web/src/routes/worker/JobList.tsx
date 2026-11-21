@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createJob, listJobs, lookupWorker, selectEmployerRole } from '../../api/client'
-import { PortalLayout } from '../../components/PortalLayout'
+import { usePageHead, SITE_URL } from '../../lib/seo'
+import { JobsLayout } from './JobsLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -10,7 +11,6 @@ import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { Field } from '../../components/ui/Field'
 import { TextField } from '../../components/ui/TextField'
 import { useAuth } from '../../context/AuthContext'
-import { workerNavItems } from './nav'
 
 const SKILLS = [
   'Mason',
@@ -194,9 +194,31 @@ function WorkerLookupBox() {
 
 export function JobList() {
   const [tab, setTab] = useState<Tab>('feed')
+  const { profile } = useAuth()
+  const isWorker = !!profile && !profile.isEmployer
+
+  usePageHead({
+    title: 'Jobs near you · My Grand Labour',
+    description:
+      'Browse jobs for masons, electricians, plumbers, welders, drivers, housekeeping staff and more across India. Free for workers.',
+    canonical: `${SITE_URL}/jobs`,
+  })
+
+  // Public view (signed out, or an employer): just the job feed.
+  if (!isWorker) {
+    return (
+      <JobsLayout>
+        <h1 className="text-2xl font-bold text-text mb-1">Jobs near you</h1>
+        <p className="text-text-muted mb-4">
+          Browse open jobs. Sign in with your phone number to apply. It&apos;s free for workers.
+        </p>
+        <JobFeedTab />
+      </JobsLayout>
+    )
+  }
 
   return (
-    <PortalLayout title="Find work" homeTo="/jobs" navItems={workerNavItems}>
+    <JobsLayout>
       <h1 className="text-2xl font-bold text-text mb-4">Worker App</h1>
 
       <WorkerLookupBox />
@@ -221,6 +243,6 @@ export function JobList() {
       </div>
 
       {tab === 'feed' ? <JobFeedTab /> : <PostJobTab />}
-    </PortalLayout>
+    </JobsLayout>
   )
 }
