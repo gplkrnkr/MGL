@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createJob, listJobs, lookupWorker, selectEmployerRole } from '../../api/client'
+import { filterJobs, TRADES } from '../../lib/jobFilters'
 import { usePageHead, SITE_URL } from '../../lib/seo'
+import { SignInPrompt } from '../../components/SignInPrompt'
 import { JobsLayout } from './JobsLayout'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -29,14 +31,62 @@ type Tab = 'feed' | 'post'
 
 function JobFeedTab() {
   const { data: jobs, isLoading, isError } = useQuery({ queryKey: ['jobs'], queryFn: listJobs })
+  const { profile } = useAuth()
+  const [trade, setTrade] = useState('All')
+  const [query, setQuery] = useState('')
+  const [prompt, setPrompt] = useState<{ id: string; title: string } | null>(null)
+  const visible = filterJobs(jobs ?? [], trade, query)
 
   return (
     <>
+      <div className="flex flex-col gap-3 mb-4">
+        <label className="relative block">
+          <span className="sr-only">Search jobs</span>
+          <span aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">
+            🔍
+          </span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search jobs, skills or places"
+            className="w-full h-12 pl-11 pr-4 rounded-lg border border-border bg-background text-text placeholder:text-text-muted focus:outline-none focus:border-primary"
+          />
+        </label>
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap" role="group" aria-label="Filter by trade">
+          {['All', ...TRADES].map((t) => (
+            <button
+              key={t}
+              type="button"
+              aria-pressed={trade === t}
+              onClick={() => setTrade(t)}
+              className={`shrink-0 h-9 px-4 rounded-full text-sm font-semibold border transition-colors ${
+                trade === t
+                  ? 'bg-primary text-text-inverse border-primary'
+                  : 'bg-background text-text border-border hover:border-primary'
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {isLoading && <p className="text-text-muted">Loading jobs…</p>}
       {isError && <ErrorBanner message="Couldn't load jobs. Try refreshing the page." />}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {jobs?.map((job) => (
-          <Link key={job.id} to={`/jobs/${job.id}`}>
+        {visible.map((job) => (
+          <Link
+            key={job.id}
+            to={`/jobs/${job.id}`}
+            onClick={(e) => {
+              // Signed-out visitors are invited to sign in first; the link stays real for crawlers.
+              if (!profile) {
+                e.preventDefault()
+                setPrompt({ id: job.id, title: job.title })
+              }
+            }}
+          >
             <Card className="h-full flex flex-col gap-2 hover:border-primary transition-colors">
               <div className="flex items-start justify-between gap-2">
                 <h2 className="text-lg font-bold text-text">{job.title}</h2>
@@ -49,12 +99,25 @@ function JobFeedTab() {
               <p className="text-sm text-text">
                 ₹{job.wageMin}–{job.wageMax} / {job.wagePeriod}
               </p>
+              {job.skillsRequired.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {job.skillsRequired.map((skill) => (
+                    <span key={skill} className="px-2 py-0.5 rounded-full bg-primary-light text-xs font-semibold text-primary">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              )}
               <p className="text-sm text-text-muted line-clamp-2">{job.description}</p>
             </Card>
           </Link>
         ))}
       </div>
       {jobs && jobs.length === 0 && <p className="text-text-muted">No open jobs right now.</p>}
+      {jobs && jobs.length > 0 && visible.length === 0 && (
+        <p className="text-text-muted">No jobs match. Try a different search or trade.</p>
+      )}
+      {prompt && <SignInPrompt jobId={prompt.id} jobTitle={prompt.title} onClose={() => setPrompt(null)} />}
     </>
   )
 }
