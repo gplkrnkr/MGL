@@ -76,10 +76,17 @@ export function JobDetail() {
               <p className="text-text-muted">{job.location}</p>
             </div>
             <div className="flex gap-2">
+              {job.isSample && <Badge status="default" label="Sample" />}
               {job.isUrgent && <Badge status="warning" label="Urgent" />}
               <Badge status={job.status} />
             </div>
           </div>
+          {job.isSample && (
+            <p className="text-sm text-text-muted bg-primary-light rounded-lg px-3 py-2">
+              This is a sample job to show how My Grand Labour works. Applications don&apos;t reach a
+              real employer.
+            </p>
+          )}
           <p className="text-text">
             ₹{job.wageMin}–{job.wageMax} / {job.wagePeriod} · {job.openings} opening(s)
           </p>

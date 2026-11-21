@@ -52,6 +52,8 @@ export interface Job {
   distanceKm: number
   openings: number
   isUrgent: boolean
+  /** Labelled demo job from the backend's sample data (shown with a Sample badge). */
+  isSample?: boolean
   status: 'open' | 'closed'
   createdAt: string
 }

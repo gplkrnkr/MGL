@@ -40,7 +40,10 @@ function JobFeedTab() {
             <Card className="h-full flex flex-col gap-2 hover:border-primary transition-colors">
               <div className="flex items-start justify-between gap-2">
                 <h2 className="text-lg font-bold text-text">{job.title}</h2>
-                {job.isUrgent && <Badge status="warning" label="Urgent" />}
+                <div className="flex gap-1 shrink-0">
+                  {job.isSample && <Badge status="default" label="Sample" />}
+                  {job.isUrgent && <Badge status="warning" label="Urgent" />}
+                </div>
               </div>
               <p className="text-sm text-text-muted">{job.location}</p>
               <p className="text-sm text-text">
