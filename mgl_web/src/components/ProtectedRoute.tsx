@@ -54,8 +54,8 @@ export function AgentRoute({ children }: { children: ReactNode }) {
 function WrongRole({ registeredAs }: { registeredAs: 'worker' | 'employer' }) {
   const { logout } = useAuth()
   const ownHome = registeredAs === 'employer' ? '/employer' : '/jobs'
-  const signOut = () => {
-    logout()
+  const signOut = async () => {
+    await logout()
     window.location.assign('/')
   }
   return (

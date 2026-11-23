@@ -17,15 +17,17 @@ app's navy/orange, flat-outlined design system.
 
 ```bash
 npm install
-cp .env.example .env   # set VITE_API_URL if the backend isn't on localhost:8000
+cp .env.example .env
 npm run dev
 ```
 
-Runs at http://localhost:5173. The backend (`mgl_backend`) must be running separately — see its
-README — and its `CORS_ORIGINS` must include `http://localhost:5173` (the default `*` works for
-dev).
+Runs at http://localhost:5173. The backend (`mgl_backend`) must be running separately on
+localhost:8000 — see its README. The Vite dev server proxies `/api` and `/files` to it, so dev
+uses one origin like production; the sign-in session is an HttpOnly cookie that needs this. Keep
+`VITE_API_URL=http://localhost:5173` (change the proxy target in `vite.config.ts` if the backend
+runs elsewhere).
 
-**`VITE_API_URL` must be the bare backend origin (e.g. `http://localhost:8000`), no `/api`
+**`VITE_API_URL` must be a bare origin (e.g. `http://localhost:5173`), no `/api`
 suffix** — `src/api/client.ts` already prefixes every request path with `/api` itself; a value
 ending in `/api` doubles it up and every request 404s. (A real bug this project shipped with
 briefly — caught by actually loading the job list against a Dockerized build rather than trusting

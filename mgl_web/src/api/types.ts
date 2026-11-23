@@ -1,5 +1,5 @@
 export interface TokenResponse {
-  access_token: string
+  access_token: string | null
   token_type: string
   user_id: string
   phone: string

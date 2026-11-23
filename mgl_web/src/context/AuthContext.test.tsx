@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuthProvider, useAuth } from './AuthContext'
-import { clearToken, getToken } from '../lib/session'
+import { isSignedIn, markSignedIn, markSignedOut } from '../lib/session'
 import * as apiClient from '../api/client'
 import type { Profile } from '../api/types'
 import { AxiosError, AxiosHeaders } from 'axios'
@@ -40,7 +40,8 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 beforeEach(() => {
-  clearToken()
+  markSignedOut()
+  localStorage.clear()
   vi.clearAllMocks()
 })
 
@@ -51,9 +52,9 @@ describe('AuthContext', () => {
     expect(result.current.profile).toBeNull()
   })
 
-  it('loginAsWorker stores the token and sets the profile', async () => {
+  it('loginAsWorker marks the browser signed in (no token stored) and sets the profile', async () => {
     vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
-      access_token: 'tok-123',
+      access_token: null,
       token_type: 'bearer',
       user_id: 'p1',
       phone: '+911234567890',
@@ -68,13 +69,14 @@ describe('AuthContext', () => {
     })
 
     expect(apiClient.verifyFirebaseToken).toHaveBeenCalledWith('firebase-id-token')
-    expect(getToken()).toBe('tok-123')
+    expect(isSignedIn()).toBe(true)
+    expect(localStorage.getItem('mgl_token')).toBeNull()
     expect(result.current.profile).toEqual(mockProfile)
   })
 
   it('loginAsEmployer calls selectEmployerRole instead of getMyProfile', async () => {
     vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
-      access_token: 'tok-456',
+      access_token: null,
       token_type: 'bearer',
       user_id: 'p1',
       phone: '+911234567890',
@@ -93,9 +95,9 @@ describe('AuthContext', () => {
     expect(result.current.profile?.isEmployer).toBe(true)
   })
 
-  it('logout clears the token and profile', async () => {
+  it('logout asks the backend to clear the cookie and clears the profile', async () => {
     vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
-      access_token: 'tok-789',
+      access_token: null,
       token_type: 'bearer',
       user_id: 'p1',
       phone: '+911234567890',
@@ -108,26 +110,46 @@ describe('AuthContext', () => {
       await result.current.loginAsWorker('firebase-id-token')
     })
 
-    act(() => result.current.logout())
+    await act(async () => {
+      await result.current.logout()
+    })
 
-    expect(getToken()).toBeNull()
+    expect(apiClient.logoutSession).toHaveBeenCalled()
+    expect(isSignedIn()).toBe(false)
     expect(result.current.profile).toBeNull()
   })
 
-  it('clears an invalid stored token on initial load', async () => {
-    localStorage.setItem('mgl_token', 'stale-token')
+  it('ends an expired session on initial load', async () => {
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockRejectedValue(new Error('401'))
 
     const { result } = renderHook(() => useAuth(), { wrapper })
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.profile).toBeNull()
-    expect(getToken()).toBeNull()
+    expect(isSignedIn()).toBe(false)
+    expect(apiClient.logoutSession).toHaveBeenCalled()
+  })
+
+  it('removes a token left by the old localStorage sign-in', async () => {
+    localStorage.setItem('mgl_token', 'old-token')
+
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(localStorage.getItem('mgl_token')).toBeNull()
+    expect(apiClient.getMyProfile).not.toHaveBeenCalled()
+  })
+
+  it('does not ask who is signed in when the browser was never signed in', async () => {
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    expect(apiClient.getMyProfile).not.toHaveBeenCalled()
   })
 
   it('rejects an employer number on the worker sign-in and leaves no session', async () => {
     vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
-      access_token: 'tok-emp',
+      access_token: null,
       token_type: 'bearer',
       user_id: 'p1',
       phone: '+911234567890',
@@ -140,13 +162,14 @@ describe('AuthContext', () => {
     await act(async () => {
       await expect(result.current.loginAsWorker('firebase-id-token')).rejects.toBeInstanceOf(WrongRoleError)
     })
-    expect(getToken()).toBeNull()
+    expect(isSignedIn()).toBe(false)
+    expect(apiClient.logoutSession).toHaveBeenCalled()
     expect(result.current.profile).toBeNull()
   })
 
   it('turns the backend 409 into a wrong-role error on the employer sign-in', async () => {
     vi.mocked(apiClient.verifyFirebaseToken).mockResolvedValue({
-      access_token: 'tok-wkr',
+      access_token: null,
       token_type: 'bearer',
       user_id: 'p1',
       phone: '+911234567890',
@@ -169,7 +192,8 @@ describe('AuthContext', () => {
     })
     expect(caught).toBeInstanceOf(WrongRoleError)
     expect((caught as WrongRoleError).registeredAs).toBe('worker')
-    expect(getToken()).toBeNull()
+    expect(isSignedIn()).toBe(false)
+    expect(apiClient.logoutSession).toHaveBeenCalled()
     expect(result.current.profile).toBeNull()
   })
 })

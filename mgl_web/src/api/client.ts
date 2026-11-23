@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { API_BASE_URL } from '../lib/config'
-import { clearToken, getToken } from '../lib/session'
+import { isSignedIn, markSignedOut } from '../lib/session'
 import type {
   AdminApplication,
   AgentWorkerInput,
@@ -17,21 +17,15 @@ import type {
   WorkerSearchResult,
 } from './types'
 
+// The session is an HttpOnly cookie the browser sends by itself: the site and the API share one
+// origin in production (nginx), and in dev Vite proxies /api to the backend.
 export const http = axios.create({ baseURL: API_BASE_URL })
-
-http.interceptors.request.use((config) => {
-  const token = getToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
 
 http.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (axios.isAxiosError(error) && error.response?.status === 401 && getToken()) {
-      clearToken()
+    if (axios.isAxiosError(error) && error.response?.status === 401 && isSignedIn()) {
+      markSignedOut()
       if (typeof window !== 'undefined' && window.location.pathname !== '/') {
         window.location.assign('/')
       }
@@ -42,9 +36,15 @@ http.interceptors.response.use(
 
 // ---- Auth ----
 
-// Exchanges a Firebase phone-auth ID token (see lib/phoneAuth.ts) for the backend's session.
+// Exchanges a Firebase phone-auth ID token (see lib/phoneAuth.ts) for the backend's session, which
+// the backend sets as an HttpOnly cookie (useCookie) rather than returning the token.
 export const verifyFirebaseToken = (idToken: string) =>
-  http.post<TokenResponse>('/api/auth/firebase/verify', { idToken }).then((r) => r.data)
+  http
+    .post<TokenResponse>('/api/auth/firebase/verify', { idToken, useCookie: true })
+    .then((r) => r.data)
+
+// Only the backend can clear the HttpOnly session cookie.
+export const logoutSession = () => http.post('/api/auth/logout').then(() => undefined)
 
 // ---- Profile ----
 

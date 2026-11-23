@@ -1,4 +1,5 @@
-const DEV_FALLBACK_API_URL = 'http://localhost:8000'
+// Dev: the Vite dev server, which proxies /api and /files to the backend on :8000.
+const DEV_FALLBACK_API_URL = 'http://localhost:5173'
 
 const rawApiUrl = import.meta.env.VITE_API_URL as string | undefined
 

@@ -25,8 +25,8 @@ export function PortalLayout({
 }) {
   const { profile, logout } = useAuth()
 
-  const signOut = () => {
-    logout()
+  const signOut = async () => {
+    await logout()
     // Full page load: the public home page is served outside this app.
     window.location.assign('/')
   }

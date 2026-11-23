@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AdminRoute, AgentRoute, EmployerRoute, WorkerRoute } from './ProtectedRoute'
 import { AuthProvider } from '../context/AuthContext'
-import { clearToken, setToken } from '../lib/session'
+import { markSignedIn, markSignedOut } from '../lib/session'
 import * as apiClient from '../api/client'
 import type { Profile } from '../api/types'
 
@@ -52,7 +52,7 @@ function renderAt(path: string, guarded: React.ReactNode) {
 }
 
 beforeEach(() => {
-  clearToken()
+  markSignedOut()
   vi.clearAllMocks()
 })
 
@@ -63,7 +63,7 @@ describe('WorkerRoute', () => {
   })
 
   it('shows a wrong-role message, not the worker pages, to an employer', async () => {
-    setToken('tok-8')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isEmployer: true })
 
     renderAt('/jobs', <WorkerRoute>worker content</WorkerRoute>)
@@ -72,7 +72,7 @@ describe('WorkerRoute', () => {
   })
 
   it('renders children when a worker is logged in', async () => {
-    setToken('tok-1')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue(baseProfile)
 
     renderAt('/jobs', <WorkerRoute>protected content</WorkerRoute>)
@@ -87,7 +87,7 @@ describe('EmployerRoute', () => {
   })
 
   it('redirects a non-employer worker to /employer/login', async () => {
-    setToken('tok-2')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isEmployer: false })
 
     renderAt('/employer', <EmployerRoute>employer content</EmployerRoute>)
@@ -95,7 +95,7 @@ describe('EmployerRoute', () => {
   })
 
   it('shows a wrong-role message to a registered worker', async () => {
-    setToken('tok-9')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, workerId: 'MGL-THR-00001' })
 
     renderAt('/employer', <EmployerRoute>employer content</EmployerRoute>)
@@ -104,7 +104,7 @@ describe('EmployerRoute', () => {
   })
 
   it('renders children for an employer', async () => {
-    setToken('tok-3')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isEmployer: true })
 
     renderAt('/employer', <EmployerRoute>employer content</EmployerRoute>)
@@ -119,7 +119,7 @@ describe('AdminRoute', () => {
   })
 
   it('redirects a non-admin worker to /admin/login', async () => {
-    setToken('tok-4')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAdmin: false })
 
     renderAt('/admin/documents', <AdminRoute>admin content</AdminRoute>)
@@ -127,7 +127,7 @@ describe('AdminRoute', () => {
   })
 
   it('renders children for an admin', async () => {
-    setToken('tok-5')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAdmin: true })
 
     renderAt('/admin/documents', <AdminRoute>admin content</AdminRoute>)
@@ -142,7 +142,7 @@ describe('AgentRoute', () => {
   })
 
   it('explains, rather than redirecting, when a signed-in user is not an agent', async () => {
-    setToken('tok-6')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAgent: false })
 
     renderAt('/agent', <AgentRoute>agent content</AgentRoute>)
@@ -151,7 +151,7 @@ describe('AgentRoute', () => {
   })
 
   it('renders children for an agent', async () => {
-    setToken('tok-7')
+    markSignedIn()
     vi.mocked(apiClient.getMyProfile).mockResolvedValue({ ...baseProfile, isAgent: true })
 
     renderAt('/agent', <AgentRoute>agent content</AgentRoute>)
