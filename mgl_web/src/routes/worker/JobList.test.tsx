@@ -42,7 +42,22 @@ function renderList() {
 describe('public job list', () => {
   beforeEach(() => {
     vi.resetAllMocks()
+    localStorage.clear()
     vi.mocked(apiClient.listJobs).mockResolvedValue(jobs)
+  })
+
+  it('comes back to the trade chip and search used last time', async () => {
+    const first = renderList()
+    await screen.findByText('Mason for apartment')
+    fireEvent.click(screen.getByRole('button', { name: 'Carpenter' }))
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'kochi' } })
+    first.unmount()
+
+    renderList()
+    expect(await screen.findByText('Carpenter for interiors')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Carpenter' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('searchbox')).toHaveValue('kochi')
+    expect(screen.queryByText('Mason for apartment')).not.toBeInTheDocument()
   })
 
   it('shows jobs with search and trade chips when signed out', async () => {

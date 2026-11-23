@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { createJob, listJobs, lookupWorker, selectEmployerRole } from '../../api/client'
-import { filterJobs, TRADES } from '../../lib/jobFilters'
+import { filterJobs, loadJobFilter, saveJobFilter, TRADES } from '../../lib/jobFilters'
 import { usePageHead, SITE_URL } from '../../lib/seo'
 import { SignInPrompt } from '../../components/SignInPrompt'
 import { JobsLayout } from './JobsLayout'
@@ -32,8 +32,9 @@ type Tab = 'feed' | 'post'
 function JobFeedTab() {
   const { data: jobs, isLoading, isError } = useQuery({ queryKey: ['jobs'], queryFn: listJobs })
   const { profile } = useAuth()
-  const [trade, setTrade] = useState('All')
-  const [query, setQuery] = useState('')
+  const [trade, setTrade] = useState(() => loadJobFilter().trade)
+  const [query, setQuery] = useState(() => loadJobFilter().query)
+  useEffect(() => saveJobFilter({ trade, query }), [trade, query])
   const [prompt, setPrompt] = useState<{ id: string; title: string } | null>(null)
   const visible = filterJobs(jobs ?? [], trade, query)
 

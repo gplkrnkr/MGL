@@ -52,3 +52,21 @@ describe('filterJobs', () => {
     expect(TRADES).toEqual(expect.arrayContaining(['Mason', 'Carpenter', 'Electrician', 'General Helper']))
   })
 })
+
+describe('remembered job filter', () => {
+  it('round-trips the trade and search', async () => {
+    const { loadJobFilter, saveJobFilter } = await import('./jobFilters')
+    localStorage.clear()
+    expect(loadJobFilter()).toEqual({ trade: 'All', query: '' })
+    saveJobFilter({ trade: 'Welder', query: 'Peenya' })
+    expect(loadJobFilter()).toEqual({ trade: 'Welder', query: 'Peenya' })
+  })
+
+  it('ignores unknown trades and bad data', async () => {
+    const { loadJobFilter } = await import('./jobFilters')
+    localStorage.setItem('mgl_job_filter', JSON.stringify({ trade: 'Astronaut', query: 5 }))
+    expect(loadJobFilter()).toEqual({ trade: 'All', query: '' })
+    localStorage.setItem('mgl_job_filter', '{not json')
+    expect(loadJobFilter()).toEqual({ trade: 'All', query: '' })
+  })
+})
