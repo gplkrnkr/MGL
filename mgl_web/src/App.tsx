@@ -30,7 +30,9 @@ import { GccOverseasDemo } from './routes/demo/GccOverseasDemo'
 function DocumentTitle() {
   const { pathname } = useLocation()
   useEffect(() => {
-    document.title = pageTitle(pathname)
+    const title = pageTitle(pathname)
+    document.title = title
+    window.mglAnalytics?.pageView(pathname, title)
   }, [pathname])
   return null
 }

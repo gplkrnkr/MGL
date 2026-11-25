@@ -93,8 +93,6 @@ if you type the URL.
 - Document *upload* UI (mobile-only; workers upload from the app). Document *review* is on the
   web now (admin portal).
 - Employer signup beyond phone sign-in.
-- Analytics — flagged but intentionally not built; needs a provider decision (GA4, Plausible,
-  etc.) and an account/site ID first.
 
 ## Run with Docker
 
@@ -136,6 +134,19 @@ the backend's bootstrap script:
 ```bash
 docker exec mgl-backend python -m scripts.promote_admin +91XXXXXXXXXX
 ```
+
+## Analytics
+
+Google Analytics 4 lives in `public/analytics.js` (the measurement ID is set there, once). It loads
+only on mygrandlabour.com after the visitor accepts the banner; `/admin`, `/agent` and `/demo` are
+never tracked. A new route must be added to `safePath` there or it reports as `/not-found`. Keep
+Enhanced Measurement **off** in the GA data stream: it would double-count pages and send link and
+form details.
+
+Google runs this stream through Tag Manager container `GTM-5ZDF8NSV`, which ignores the page's own
+`config` call. Its Google Analytics tag must keep `send_page_view` = `false` (otherwise it sends
+the raw address, query string included) and "Allow user-provided data capabilities" must stay off.
+Unit tests can't catch a change there: recheck `/g/collect` requests in a browser after editing it.
 
 ## Error monitoring (optional)
 
@@ -181,8 +192,7 @@ Snapshot as of 2026-08-21.
 
 1. **Git repo** — not initialized yet; the CI workflow and Dependabot config are inert until it
    is.
-2. **Analytics** — no provider chosen yet (see "Not built yet" above).
-3. **Accessibility** hasn't had a dedicated pass beyond basic label/`htmlFor` wiring in
+2. **Accessibility** hasn't had a dedicated pass beyond basic label/`htmlFor` wiring in
    `TextField`.
-4. Not deployed anywhere publicly — the Docker image builds and runs correctly locally, but
+3. Not deployed anywhere publicly — the Docker image builds and runs correctly locally, but
    there's no live hosting yet.
