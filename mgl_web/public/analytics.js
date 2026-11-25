@@ -3,7 +3,7 @@
 // A file, not inline: the site's Content-Security-Policy blocks inline scripts.
 // Nothing happens (no banner, no requests) without an ID or on any other host.
 (function () {
-  var MEASUREMENT_ID = ''; // "G-..." from Google Analytics; public by design
+  var MEASUREMENT_ID = 'G-Z1LKFKLCXY'; // "G-..." from Google Analytics; public by design
   var HOST = 'mygrandlabour.com';
   var KEY = 'mgl_analytics_consent';
   if (!MEASUREMENT_ID || location.hostname !== HOST) return;
