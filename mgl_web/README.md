@@ -143,6 +143,11 @@ never tracked. A new route must be added to `safePath` there or it reports as `/
 Enhanced Measurement **off** in the GA data stream: it would double-count pages and send link and
 form details.
 
+Google runs this stream through Tag Manager container `GTM-5ZDF8NSV`, which ignores the page's own
+`config` call. Its Google Analytics tag must keep `send_page_view` = `false` (otherwise it sends
+the raw address, query string included) and "Allow user-provided data capabilities" must stay off.
+Unit tests can't catch a change there: recheck `/g/collect` requests in a browser after editing it.
+
 ## Error monitoring (optional)
 
 Set `VITE_SENTRY_DSN` (build-time, like `VITE_API_URL`) to enable Sentry. Unset = complete no-op,
